@@ -1,0 +1,2535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SakuraBet — Anime Casino</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --crimson: #c9002b;
+  --crimson-bright: #ff1744;
+  --gold: #ffd700;
+  --gold-dim: #b8860b;
+  --sakura: #ffb7c5;
+  --sakura-deep: #e91e63;
+  --midnight: #06040f;
+  --deep: #0d0820;
+  --surface: #130d26;
+  --surface2: #1a1133;
+  --surface3: #231742;
+  --text: #f0e8ff;
+  --text-dim: #9a88c0;
+  --cyan: #00e5ff;
+  --purple: #7c4dff;
+  --green: #00e676;
+  --border: rgba(255,215,0,0.15);
+  --glow-gold: 0 0 20px rgba(255,215,0,0.4);
+  --glow-crimson: 0 0 20px rgba(201,0,43,0.5);
+  --glow-sakura: 0 0 20px rgba(233,30,99,0.4);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background: var(--midnight);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== PARTICLE CANVAS ===== */
+#particles { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+
+/* ===== PAGE SYSTEM ===== */
+.page { display:none; min-height:100vh; position:relative; z-index:1; }
+.page.active { display:block; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--deep); }
+::-webkit-scrollbar-thumb { background: linear-gradient(var(--crimson), var(--gold)); border-radius:3px; }
+
+/* ===== GLOBAL COMPONENTS ===== */
+.btn-primary {
+  background: linear-gradient(135deg, var(--crimson), #8b0018);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 12px 32px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent);
+  transition: left 0.5s;
+}
+.btn-primary:hover::before { left:100%; }
+.btn-primary:hover { box-shadow: var(--glow-gold), var(--glow-crimson); transform:translateY(-2px); }
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 11px 30px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: all 0.3s;
+}
+.btn-secondary:hover { background: rgba(255,215,0,0.1); box-shadow: var(--glow-gold); }
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: color 0.3s;
+}
+.btn-ghost:hover { color: var(--gold); }
+
+.input-field {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--crimson);
+  color: var(--text);
+  padding: 14px 16px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+  outline: none;
+  transition: all 0.3s;
+  letter-spacing: 1px;
+}
+.input-field:focus {
+  border-color: var(--gold);
+  border-bottom-color: var(--gold);
+  background: rgba(255,215,0,0.03);
+  box-shadow: 0 4px 15px rgba(255,215,0,0.1);
+}
+.input-field::placeholder { color: var(--text-dim); font-size:14px; }
+
+.input-wrap { position:relative; margin-bottom:20px; }
+.input-label {
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color: var(--gold-dim);
+  margin-bottom:8px;
+}
+.input-icon {
+  position:absolute; right:14px; top:50%; transform:translateY(-50%);
+  color: var(--text-dim); font-size:18px; cursor:pointer;
+}
+
+/* ===== DIVIDER ===== */
+.divider {
+  display:flex; align-items:center; gap:16px; margin:24px 0;
+}
+.divider::before, .divider::after {
+  content:''; flex:1; height:1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.divider span { color:var(--text-dim); font-size:12px; letter-spacing:2px; white-space:nowrap; }
+
+/* ===== NOTIFICATION ===== */
+.notif {
+  position:fixed; top:24px; right:24px; z-index:9999;
+  padding:14px 24px; border-left:3px solid;
+  font-size:14px; font-weight:600; letter-spacing:1px;
+  backdrop-filter: blur(20px);
+  animation: slideIn 0.4s ease;
+  max-width:320px;
+}
+.notif.success { background:rgba(0,230,118,0.12); border-color:var(--green); color:var(--green); }
+.notif.error { background:rgba(255,23,68,0.12); border-color:var(--crimson-bright); color:var(--crimson-bright); }
+.notif.info { background:rgba(0,229,255,0.12); border-color:var(--cyan); color:var(--cyan); }
+@keyframes slideIn { from{transform:translateX(100%);opacity:0;} to{transform:translateX(0);opacity:1;} }
+
+/* ===== BADGE ===== */
+.badge {
+  display:inline-block; padding:3px 10px;
+  font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+}
+.badge-gold { background:rgba(255,215,0,0.15); color:var(--gold); border:1px solid rgba(255,215,0,0.3); }
+.badge-red { background:rgba(201,0,43,0.2); color:var(--crimson-bright); border:1px solid rgba(255,23,68,0.3); }
+.badge-green { background:rgba(0,230,118,0.12); color:var(--green); border:1px solid rgba(0,230,118,0.3); }
+.badge-cyan { background:rgba(0,229,255,0.1); color:var(--cyan); border:1px solid rgba(0,229,255,0.2); }
+
+/* ===== CARD ===== */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  display:none; position:fixed; inset:0; z-index:8000;
+  background:rgba(6,4,15,0.85); backdrop-filter:blur(8px);
+  align-items:center; justify-content:center;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:var(--surface2); border:1px solid var(--border); padding:40px;
+  max-width:500px; width:95%; position:relative; animation:fadeUp 0.4s ease;
+}
+.modal::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold), var(--crimson), transparent);
+}
+.modal-close {
+  position:absolute; top:16px; right:16px;
+  background:none; border:none; color:var(--text-dim); font-size:24px; cursor:pointer;
+}
+@keyframes fadeUp { from{transform:translateY(30px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+
+/* ===========================
+   ===== LANDING PAGE ========
+   =========================== */
+#page-landing {
+  background: var(--midnight);
+}
+
+/* NAV */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  padding:0 5%;
+  display:flex; align-items:center; justify-content:space-between;
+  height:72px;
+  background: linear-gradient(180deg, rgba(6,4,15,0.95) 0%, transparent 100%);
+  border-bottom:1px solid rgba(255,215,0,0.07);
+  backdrop-filter:blur(10px);
+  transition: background 0.3s;
+}
+.nav.scrolled { background:rgba(6,4,15,0.97); }
+.nav-logo {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size:22px; font-weight:700; color:var(--gold);
+  text-shadow: var(--glow-gold);
+  cursor:pointer;
+}
+.nav-logo span { color:var(--crimson-bright); }
+.nav-links { display:flex; gap:32px; align-items:center; }
+.nav-link {
+  font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase;
+  color:var(--text-dim); cursor:pointer; transition:color 0.3s;
+  position:relative; padding-bottom:4px;
+}
+.nav-link::after {
+  content:''; position:absolute; bottom:0; left:0; width:0; height:1px;
+  background:var(--gold); transition:width 0.3s;
+}
+.nav-link:hover { color:var(--gold); }
+.nav-link:hover::after { width:100%; }
+.nav-actions { display:flex; gap:12px; align-items:center; }
+
+/* HERO */
+.hero {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:120px 5% 80px;
+  position:relative; overflow:hidden;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(201,0,43,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(124,77,255,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 80%, rgba(233,30,99,0.1) 0%, transparent 60%),
+    var(--midnight);
+}
+.hero-grid {
+  position:absolute; inset:0; opacity:0.04;
+  background-image: 
+    linear-gradient(var(--gold) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gold) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-content {
+  max-width:700px; text-align:center; z-index:2;
+  animation:heroFade 1s ease 0.2s both;
+}
+@keyframes heroFade { from{opacity:0;transform:translateY(40px);} to{opacity:1;transform:translateY(0);} }
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--gold);
+  margin-bottom:24px; border:1px solid rgba(255,215,0,0.2);
+  padding:8px 20px; background:rgba(255,215,0,0.05);
+}
+.hero-eyebrow::before, .hero-eyebrow::after { content:'✦'; font-size:8px; }
+
+.hero-title {
+  font-family:'Cinzel Decorative', cursive;
+  font-size:clamp(36px,6vw,80px); font-weight:900; line-height:1.05;
+  margin-bottom:20px; letter-spacing:2px;
+}
+.hero-title .line1 { color:var(--text); display:block; }
+.hero-title .line2 {
+  display:block; color:transparent;
+  -webkit-text-stroke:1.5px var(--gold);
+  text-shadow: none;
+}
+.hero-title .line3 {
+  display:block; color:var(--crimson-bright);
+  text-shadow: 0 0 40px rgba(255,23,68,0.5);
+}
+
+.hero-sub {
+  font-size:18px; font-weight:400; color:var(--text-dim); line-height:1.7;
+  max-width:500px; margin:0 auto 40px; letter-spacing:0.5px;
+}
+
+.hero-actions { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+
+.hero-stats {
+  display:flex; gap:40px; justify-content:center; margin-top:64px;
+  flex-wrap:wrap;
+}
+.hero-stat { text-align:center; }
+.hero-stat-val {
+  font-family:'Cinzel Decorative', cursive; font-size:28px; font-weight:700;
+  color:var(--gold); display:block; line-height:1;
+}
+.hero-stat-label { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-top:6px; }
+
+/* FLOATING CARDS */
+.hero-cards {
+  position:absolute; right:5%; top:50%; transform:translateY(-50%);
+  display:none;
+}
+@media(min-width:1200px) { .hero-cards { display:block; } }
+.floating-card {
+  width:120px; height:170px; border-radius:10px; border:2px solid;
+  display:flex; align-items:center; justify-content:center;
+  font-size:48px; position:absolute; backdrop-filter:blur(10px);
+}
+.fc1 { border-color:var(--gold); background:rgba(255,215,0,0.07); top:-80px; left:0; animation:float1 4s ease-in-out infinite; }
+.fc2 { border-color:var(--crimson); background:rgba(201,0,43,0.1); top:0; left:90px; animation:float2 4.5s ease-in-out infinite; }
+.fc3 { border-color:var(--sakura); background:rgba(255,183,197,0.07); top:80px; left:-20px; animation:float3 5s ease-in-out infinite; }
+@keyframes float1 { 0%,100%{transform:translateY(0) rotate(-3deg);} 50%{transform:translateY(-15px) rotate(-3deg);} }
+@keyframes float2 { 0%,100%{transform:translateY(0) rotate(5deg);} 50%{transform:translateY(-20px) rotate(5deg);} }
+@keyframes float3 { 0%,100%{transform:translateY(0) rotate(-8deg);} 50%{transform:translateY(-12px) rotate(-8deg);} }
+
+/* MARQUEE */
+.marquee-wrap {
+  background: linear-gradient(90deg, var(--crimson), #6b0015, var(--crimson));
+  border-top:1px solid rgba(255,215,0,0.2);
+  border-bottom:1px solid rgba(255,215,0,0.2);
+  padding:10px 0; overflow:hidden; position:relative; z-index:2;
+}
+.marquee-track {
+  display:flex; gap:60px; animation:marquee 20s linear infinite;
+  white-space:nowrap;
+}
+.marquee-track span {
+  font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); opacity:0.9;
+}
+.marquee-track span::before { content:'⟡ '; }
+@keyframes marquee { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+/* GAMES SECTION */
+.section {
+  padding:100px 5%;
+  position:relative;
+}
+.section-header {
+  text-align:center; margin-bottom:60px;
+}
+.section-tag {
+  display:inline-block; font-size:10px; font-weight:700; letter-spacing:4px;
+  text-transform:uppercase; color:var(--crimson-bright); margin-bottom:12px;
+}
+.section-title {
+  font-family:'Cinzel Decorative', cursive; font-size:clamp(24px,3.5vw,42px);
+  font-weight:700; color:var(--text); margin-bottom:16px;
+}
+.section-title span { color:var(--gold); }
+.section-sub { font-size:16px; color:var(--text-dim); max-width:500px; margin:0 auto; }
+
+/* GAME GRID */
+.game-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:24px;
+}
+.game-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  overflow:hidden; cursor:pointer;
+  transition:transform 0.3s, box-shadow 0.3s;
+  position:relative;
+}
+.game-card:hover { transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,0.5), var(--glow-gold); }
+.game-card-img {
+  height:180px; position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center; font-size:64px;
+}
+.game-card-img::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 50%, var(--surface) 100%);
+}
+.game-card-body { padding:20px; }
+.game-card-name {
+  font-family:'Cinzel Decorative', cursive; font-size:16px; color:var(--text);
+  margin-bottom:8px;
+}
+.game-card-info { font-size:13px; color:var(--text-dim); margin-bottom:14px; letter-spacing:0.5px; }
+.game-card-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  padding-top:14px; border-top:1px solid var(--border);
+}
+.game-rtp { font-size:12px; color:var(--green); font-weight:700; letter-spacing:1px; }
+.game-players { font-size:12px; color:var(--text-dim); }
+
+.gc-baccarat .game-card-img { background:linear-gradient(135deg, #0d0820, #2a0520); }
+.gc-slots .game-card-img { background:linear-gradient(135deg, #0a0d20, #1a0d30); }
+.gc-poker .game-card-img { background:linear-gradient(135deg, #100505, #280808); }
+.gc-roulette .game-card-img { background:linear-gradient(135deg, #05100a, #0a2010); }
+.gc-blackjack .game-card-img { background:linear-gradient(135deg, #0d0a05, #241a00); }
+.gc-mahjong .game-card-img { background:linear-gradient(135deg, #050d12, #001825); }
+
+/* PROMO SECTION */
+.promo-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:24px;
+}
+@media(max-width:768px) { .promo-grid { grid-template-columns:1fr; } }
+.promo-card {
+  background:var(--surface); border:1px solid var(--border);
+  padding:36px; position:relative; overflow:hidden;
+}
+.promo-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+}
+.promo-gold::before { background:linear-gradient(90deg, var(--gold), var(--gold-dim)); }
+.promo-red::before { background:linear-gradient(90deg, var(--crimson-bright), var(--crimson)); }
+.promo-tag { font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-bottom:12px; }
+.promo-gold .promo-tag { color:var(--gold); }
+.promo-red .promo-tag { color:var(--crimson-bright); }
+.promo-title { font-family:'Cinzel Decorative', cursive; font-size:clamp(18px,2.5vw,26px); color:var(--text); margin-bottom:10px; }
+.promo-desc { font-size:14px; color:var(--text-dim); line-height:1.7; margin-bottom:24px; }
+.promo-decor {
+  position:absolute; right:20px; bottom:20px; font-size:100px; opacity:0.06; line-height:1;
+}
+
+/* FOOTER */
+.footer {
+  background:var(--deep); border-top:1px solid var(--border);
+  padding:60px 5% 30px;
+}
+.footer-top {
+  display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px;
+}
+@media(max-width:768px) { .footer-top { grid-template-columns:1fr 1fr; } }
+.footer-brand { }
+.footer-logo {
+  font-family:'Cinzel Decorative', cursive; font-size:20px; color:var(--gold);
+  margin-bottom:16px;
+}
+.footer-desc { font-size:13px; color:var(--text-dim); line-height:1.8; max-width:260px; }
+.footer-col-title {
+  font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--gold);
+  margin-bottom:16px; font-weight:700;
+}
+.footer-links { list-style:none; }
+.footer-links li { margin-bottom:10px; }
+.footer-links a { font-size:14px; color:var(--text-dim); text-decoration:none; transition:color 0.3s; letter-spacing:0.5px; }
+.footer-links a:hover { color:var(--gold); }
+.footer-bottom {
+  border-top:1px solid var(--border); padding-top:24px;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+}
+.footer-copy { font-size:12px; color:var(--text-dim); letter-spacing:1px; }
+.footer-legal { font-size:11px; color:var(--text-dim); opacity:0.6; letter-spacing:0.5px; }
+
+/* =============================
+   ===== AUTH PAGES ============
+   ============================= */
+.auth-page {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:40px 20px;
+  background: var(--midnight);
+  position:relative; overflow:hidden;
+}
+.auth-bg {
+  position:absolute; inset:0;
+  background: 
+    radial-gradient(ellipse at 30% 40%, rgba(201,0,43,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 70%, rgba(124,77,255,0.1) 0%, transparent 55%);
+}
+.auth-grid-bg {
+  position:absolute; inset:0; opacity:0.03;
+  background-image:linear-gradient(var(--gold) 1px, transparent 1px), linear-gradient(90deg, var(--gold) 1px, transparent 1px);
+  background-size:50px 50px;
+}
+.auth-box {
+  background:var(--surface); border:1px solid var(--border);
+  width:100%; max-width:460px;
+  padding:48px; position:relative; z-index:2;
+  animation:fadeUp 0.5s ease;
+}
+.auth-box::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--crimson), var(--gold), var(--crimson));
+}
+.auth-logo {
+  font-family:'Cinzel Decorative', cursive; font-size:24px; color:var(--gold);
+  text-align:center; margin-bottom:8px; cursor:pointer;
+}
+.auth-logo span { color:var(--crimson-bright); }
+.auth-tagline { text-align:center; font-size:12px; letter-spacing:2px; color:var(--text-dim); margin-bottom:32px; text-transform:uppercase; }
+.auth-title { font-family:'Noto Serif JP', serif; font-size:22px; color:var(--text); margin-bottom:6px; font-weight:700; }
+.auth-sub { font-size:14px; color:var(--text-dim); margin-bottom:28px; letter-spacing:0.5px; }
+.auth-footer { margin-top:24px; text-align:center; font-size:13px; color:var(--text-dim); }
+.auth-footer a { color:var(--gold); cursor:pointer; font-weight:600; }
+.auth-footer a:hover { text-decoration:underline; }
+.auth-social { display:flex; gap:12px; margin-bottom:24px; }
+.auth-social-btn {
+  flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  color:var(--text); padding:11px; font-family:'Rajdhani', sans-serif;
+  font-size:13px; font-weight:600; letter-spacing:1px; cursor:pointer;
+  transition:all 0.3s; display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.auth-social-btn:hover { background:rgba(255,255,255,0.08); border-color:var(--gold); }
+
+.forgot-link {
+  font-size:12px; color:var(--text-dim); cursor:pointer; float:right; margin-top:-12px; margin-bottom:20px;
+  letter-spacing:0.5px; transition:color 0.3s;
+}
+.forgot-link:hover { color:var(--gold); }
+
+.terms-check { display:flex; align-items:flex-start; gap:10px; margin-bottom:20px; }
+.terms-check input[type=checkbox] { margin-top:3px; accent-color:var(--crimson); width:16px; height:16px; flex-shrink:0; cursor:pointer; }
+.terms-check label { font-size:12px; color:var(--text-dim); line-height:1.5; cursor:pointer; }
+.terms-check a { color:var(--gold); }
+
+.otp-inputs { display:flex; gap:10px; margin-bottom:24px; }
+.otp-input {
+  flex:1; background:rgba(255,255,255,0.05); border:2px solid var(--border);
+  color:var(--text); text-align:center; font-family:'Cinzel Decorative', cursive;
+  font-size:22px; font-weight:700; padding:14px 8px; outline:none; transition:all 0.3s;
+}
+.otp-input:focus { border-color:var(--gold); box-shadow:0 0 15px rgba(255,215,0,0.2); }
+
+/* =============================
+   ===== DASHBOARD SHARED ======
+   ============================= */
+.dash-layout {
+  display:flex; min-height:100vh;
+}
+.sidebar {
+  width:260px; background:var(--deep); border-right:1px solid var(--border);
+  position:fixed; top:0; left:0; bottom:0; z-index:100;
+  display:flex; flex-direction:column;
+  transition:transform 0.3s;
+}
+.sidebar-head {
+  padding:24px 20px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.sidebar-logo {
+  font-family:'Cinzel Decorative', cursive; font-size:18px; color:var(--gold);
+}
+.sidebar-logo span { color:var(--crimson-bright); }
+.sidebar-tag { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-top:2px; }
+.sidebar-body { flex:1; overflow-y:auto; padding:16px 0; }
+.sidebar-section-title {
+  font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+  color:var(--text-dim); padding:12px 20px 6px; opacity:0.6;
+}
+.sidebar-item {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 20px; cursor:pointer; transition:all 0.2s;
+  font-size:14px; font-weight:600; letter-spacing:0.5px; color:var(--text-dim);
+  position:relative; margin:2px 8px; border-radius:0;
+}
+.sidebar-item::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:0;
+  background:var(--crimson); transition:width 0.2s;
+}
+.sidebar-item:hover { color:var(--text); background:rgba(255,255,255,0.04); }
+.sidebar-item.active {
+  color:var(--gold); background:rgba(255,215,0,0.06);
+}
+.sidebar-item.active::before { width:3px; }
+.sidebar-icon { font-size:18px; width:22px; text-align:center; flex-shrink:0; }
+.sidebar-badge {
+  margin-left:auto; background:var(--crimson); color:white; font-size:10px;
+  font-weight:700; padding:2px 7px; border-radius:10px; min-width:20px; text-align:center;
+}
+.sidebar-footer {
+  padding:16px 20px; border-top:1px solid var(--border);
+}
+.sidebar-user {
+  display:flex; align-items:center; gap:12px; cursor:pointer; padding:8px;
+  transition:background 0.2s; border-radius:4px;
+}
+.sidebar-user:hover { background:rgba(255,255,255,0.04); }
+.sidebar-avatar {
+  width:40px; height:40px; border-radius:50%; border:2px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; background:rgba(255,215,0,0.1); flex-shrink:0;
+}
+.sidebar-user-name { font-size:14px; font-weight:700; color:var(--text); line-height:1.2; }
+.sidebar-user-role { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); }
+
+.dash-main {
+  margin-left:260px; flex:1; background:var(--midnight); min-height:100vh;
+}
+.dash-topbar {
+  height:64px; background:var(--deep); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px; position:sticky; top:0; z-index:50;
+}
+.topbar-title {
+  font-family:'Cinzel Decorative', cursive; font-size:16px; color:var(--text);
+  letter-spacing:1px;
+}
+.topbar-right { display:flex; align-items:center; gap:20px; }
+.topbar-btn {
+  background:none; border:none; color:var(--text-dim); font-size:20px; cursor:pointer;
+  transition:color 0.3s; position:relative;
+}
+.topbar-btn:hover { color:var(--gold); }
+.topbar-notif-dot {
+  position:absolute; top:2px; right:2px; width:8px; height:8px;
+  background:var(--crimson-bright); border-radius:50%;
+}
+.dash-content { padding:32px; }
+.dash-section-title {
+  font-family:'Cinzel Decorative', cursive; font-size:18px; color:var(--text);
+  margin-bottom:24px; display:flex; align-items:center; gap:10px;
+}
+.dash-section-title::after {
+  content:''; flex:1; height:1px; background:var(--border); max-width:200px;
+}
+
+/* STAT CARDS */
+.stat-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:20px; margin-bottom:32px;
+}
+.stat-card {
+  background:var(--surface); border:1px solid var(--border);
+  padding:24px; position:relative; overflow:hidden; cursor:pointer;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(0,0,0,0.4); }
+.stat-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+}
+.sc-gold::before { background:linear-gradient(90deg, var(--gold), var(--gold-dim)); }
+.sc-red::before { background:linear-gradient(90deg, var(--crimson-bright), var(--crimson)); }
+.sc-green::before { background:linear-gradient(90deg, var(--green), #00b248); }
+.sc-cyan::before { background:linear-gradient(90deg, var(--cyan), #0097a7); }
+.sc-purple::before { background:linear-gradient(90deg, var(--purple), #4527a0); }
+.stat-icon { font-size:28px; margin-bottom:12px; display:block; }
+.stat-val {
+  font-family:'Cinzel Decorative', cursive; font-size:22px; color:var(--text); display:block; line-height:1.2; margin-bottom:4px;
+}
+.stat-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); }
+.stat-delta {
+  position:absolute; right:16px; top:20px; font-size:11px; font-weight:700;
+  padding:3px 8px; border-radius:2px;
+}
+.delta-up { color:var(--green); background:rgba(0,230,118,0.1); }
+.delta-down { color:var(--crimson-bright); background:rgba(255,23,68,0.1); }
+
+/* TABLE */
+.table-wrap { overflow-x:auto; }
+.data-table { width:100%; border-collapse:collapse; }
+.data-table th {
+  text-align:left; font-size:10px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); font-weight:700; padding:12px 16px;
+  border-bottom:2px solid rgba(255,215,0,0.15); white-space:nowrap;
+}
+.data-table td {
+  padding:14px 16px; font-size:14px; color:var(--text);
+  border-bottom:1px solid rgba(255,255,255,0.04); font-weight:500; white-space:nowrap;
+}
+.data-table tr:hover td { background:rgba(255,255,255,0.02); }
+.data-table .sub { font-size:12px; color:var(--text-dim); display:block; margin-top:2px; }
+
+/* TABS */
+.tabs { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:28px; }
+.tab {
+  padding:12px 24px; font-size:12px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; cursor:pointer; color:var(--text-dim); transition:all 0.2s;
+  border-bottom:2px solid transparent; margin-bottom:-2px;
+}
+.tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.tab:hover:not(.active) { color:var(--text); }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* PROGRESS BAR */
+.progress-wrap { margin-bottom:16px; }
+.progress-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px; }
+.progress-label span:first-child { color:var(--text-dim); letter-spacing:1px; }
+.progress-label span:last-child { color:var(--gold); font-weight:700; }
+.progress-bar { height:6px; background:rgba(255,255,255,0.06); position:relative; overflow:hidden; }
+.progress-fill {
+  position:absolute; top:0; left:0; height:100%;
+  background:linear-gradient(90deg, var(--crimson), var(--gold));
+  transition:width 1s ease;
+}
+
+/* CHART MOCK */
+.chart-area {
+  background:var(--surface); border:1px solid var(--border);
+  padding:24px; margin-bottom:24px; height:220px; position:relative; overflow:hidden;
+}
+.chart-bars {
+  display:flex; align-items:flex-end; gap:8px; height:140px; padding:0 8px;
+}
+.chart-bar {
+  flex:1; min-width:20px;
+  background:linear-gradient(180deg, var(--crimson), rgba(201,0,43,0.3));
+  border-top:2px solid var(--crimson-bright);
+  position:relative; transition:opacity 0.2s; cursor:pointer;
+}
+.chart-bar:hover { opacity:0.8; }
+.chart-bar.gold-bar { background:linear-gradient(180deg, var(--gold), rgba(255,215,0,0.3)); border-top-color:var(--gold); }
+.chart-labels {
+  display:flex; gap:8px; padding:8px 8px 0; border-top:1px solid var(--border);
+}
+.chart-label { flex:1; text-align:center; font-size:9px; color:var(--text-dim); letter-spacing:1px; }
+.chart-title { font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:16px; }
+
+/* WALLET DISPLAY */
+.wallet-card {
+  background:linear-gradient(135deg, var(--crimson) 0%, #4a0010 50%, var(--deep) 100%);
+  border:1px solid rgba(255,215,0,0.3); padding:28px 32px;
+  position:relative; overflow:hidden; margin-bottom:24px;
+}
+.wallet-card::before {
+  content:''; position:absolute; top:-50%; right:-20%;
+  width:300px; height:300px; border-radius:50%;
+  background:rgba(255,215,0,0.05);
+}
+.wallet-label { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,215,0,0.7); margin-bottom:8px; }
+.wallet-amount {
+  font-family:'Cinzel Decorative', cursive; font-size:40px; font-weight:700;
+  color:var(--gold); line-height:1; margin-bottom:4px;
+}
+.wallet-amount span { font-size:22px; }
+.wallet-sub { font-size:12px; color:rgba(255,255,255,0.5); letter-spacing:1px; }
+.wallet-actions { display:flex; gap:12px; margin-top:20px; }
+
+/* LEVEL CARD */
+.level-card {
+  background:var(--surface); border:1px solid var(--border);
+  padding:24px; margin-bottom:24px; display:flex; gap:20px; align-items:center;
+}
+.level-badge {
+  width:60px; height:60px; flex-shrink:0;
+  background:linear-gradient(135deg, var(--gold), var(--gold-dim));
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px; font-weight:900; color:var(--midnight);
+  font-family:'Cinzel Decorative', cursive;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+.level-info { flex:1; }
+.level-title { font-family:'Cinzel Decorative', cursive; font-size:16px; color:var(--gold); margin-bottom:4px; }
+.level-sub { font-size:12px; color:var(--text-dim); margin-bottom:12px; }
+
+/* NOTIF LIST */
+.notif-list { list-style:none; }
+.notif-item {
+  display:flex; gap:14px; align-items:flex-start; padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.notif-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.notif-item-title { font-size:14px; color:var(--text); font-weight:600; margin-bottom:2px; }
+.notif-item-time { font-size:11px; color:var(--text-dim); letter-spacing:1px; }
+
+/* TOGGLE */
+.toggle-wrap { display:flex; align-items:center; gap:12px; }
+.toggle {
+  width:46px; height:24px; background:rgba(255,255,255,0.1);
+  border-radius:12px; cursor:pointer; position:relative; transition:background 0.3s;
+  flex-shrink:0;
+}
+.toggle.on { background:var(--crimson); }
+.toggle-knob {
+  position:absolute; top:3px; left:3px; width:18px; height:18px;
+  background:white; border-radius:50%; transition:left 0.3s;
+}
+.toggle.on .toggle-knob { left:25px; }
+.toggle-label { font-size:13px; color:var(--text-dim); letter-spacing:0.5px; }
+
+/* SELECT */
+.select-field {
+  background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  color:var(--text); padding:11px 14px; font-family:'Rajdhani', sans-serif;
+  font-size:15px; outline:none; cursor:pointer; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23b8860b'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center;
+  padding-right:36px;
+}
+.select-field:focus { border-color:var(--gold); }
+
+/* ===== ADMIN TABLE ACTIONS ===== */
+.action-btn {
+  padding:6px 14px; font-size:11px; font-weight:700; letter-spacing:1px;
+  text-transform:uppercase; cursor:pointer; border:1px solid; transition:all 0.2s; background:none;
+  font-family:'Rajdhani', sans-serif;
+}
+.action-btn.edit { color:var(--cyan); border-color:rgba(0,229,255,0.3); }
+.action-btn.edit:hover { background:rgba(0,229,255,0.1); }
+.action-btn.ban { color:var(--crimson-bright); border-color:rgba(255,23,68,0.3); }
+.action-btn.ban:hover { background:rgba(255,23,68,0.1); }
+.action-btn.approve { color:var(--green); border-color:rgba(0,230,118,0.3); }
+.action-btn.approve:hover { background:rgba(0,230,118,0.1); }
+
+/* STATUS DOT */
+.status { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; }
+.status-dot { width:7px; height:7px; border-radius:50%; }
+.status.online .status-dot { background:var(--green); box-shadow:0 0 8px var(--green); }
+.status.offline .status-dot { background:var(--text-dim); }
+.status.banned .status-dot { background:var(--crimson-bright); box-shadow:0 0 8px var(--crimson-bright); }
+.status.pending .status-dot { background:var(--gold); }
+
+/* SIDEBAR OVERLAY */
+.sidebar-overlay {
+  display:none; position:fixed; inset:0; z-index:99;
+  background:rgba(6,4,15,0.7); backdrop-filter:blur(4px);
+}
+.sidebar-overlay.show { display:block; }
+
+/* RESPONSIVE */
+@media(max-width:900px) {
+  .sidebar { transform:translateX(-260px); z-index:200; }
+  .sidebar.open { transform:translateX(0); box-shadow:8px 0 40px rgba(0,0,0,0.8); }
+  .dash-main { margin-left:0; }
+  .nav-links { display:none; }
+  .dash-content { padding:16px; }
+  .dash-topbar { padding:0 16px; }
+  .topbar-right .search-bar { display:none; }
+  .quick-actions { grid-template-columns:repeat(2,1fr); }
+  .stat-grid { grid-template-columns:1fr 1fr; }
+  .wallet-card { padding:20px; }
+  .wallet-amount { font-size:30px; }
+}
+
+/* ANIMATIONS */
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+@keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+.animate-pulse { animation:pulse 2s infinite; }
+
+/* SEARCH */
+.search-bar {
+  display:flex; gap:0; max-width:340px; flex:1;
+}
+.search-input {
+  flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-right:none;
+  color:var(--text); padding:9px 14px; font-family:'Rajdhani', sans-serif; font-size:14px;
+  outline:none; transition:border 0.3s;
+}
+.search-input:focus { border-color:rgba(255,215,0,0.3); }
+.search-btn {
+  background:var(--crimson); border:1px solid var(--crimson); color:white;
+  padding:9px 16px; cursor:pointer; font-size:14px; transition:background 0.2s;
+}
+.search-btn:hover { background:#a3001f; }
+
+/* AVATAR */
+.avatar {
+  width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg, var(--crimson), var(--purple));
+  display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;
+  color:white; border:2px solid rgba(255,215,0,0.2); flex-shrink:0; overflow:hidden;
+}
+
+/* MINI GAME CARD */
+.mini-game {
+  background:var(--surface); border:1px solid var(--border); padding:16px 20px;
+  display:flex; align-items:center; gap:14px; cursor:pointer;
+  transition:all 0.2s; margin-bottom:12px;
+}
+.mini-game:hover { border-color:rgba(255,215,0,0.3); background:var(--surface2); }
+.mini-game-icon { font-size:28px; flex-shrink:0; }
+.mini-game-name { font-weight:700; font-size:15px; margin-bottom:2px; }
+.mini-game-info { font-size:12px; color:var(--text-dim); }
+.mini-game-play {
+  margin-left:auto; background:var(--crimson); color:white; border:none;
+  padding:7px 16px; font-family:'Rajdhani', sans-serif; font-size:12px;
+  font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer;
+  transition:all 0.2s; flex-shrink:0;
+}
+.mini-game-play:hover { background:var(--crimson-bright); box-shadow:var(--glow-crimson); }
+
+/* TWO COL */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+@media(max-width:768px) { .two-col { grid-template-columns:1fr; } }
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+@media(max-width:768px) { .three-col { grid-template-columns:1fr; } }
+
+/* QUICK ACTIONS */
+.quick-actions { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:32px; }
+.quick-action {
+  background:var(--surface); border:1px solid var(--border);
+  padding:18px; text-align:center; cursor:pointer; transition:all 0.2s;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.quick-action:hover { border-color:rgba(255,215,0,0.3); background:var(--surface2); transform:translateY(-2px); }
+.qa-icon { font-size:26px; }
+.qa-label { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-dim); }
+
+/* === MOBILE HAMBURGER === */
+.hamburger {
+  display:none; background:none; border:none; color:var(--gold);
+  font-size:22px; cursor:pointer;
+}
+@media(max-width:900px) { .hamburger { display:block; } }
+
+/* OVERVIEW RESPONSIVE */
+@media(max-width:900px) {
+  .overview-stats-row { grid-template-columns:1fr 1fr !important; }
+  .overview-mid-row { grid-template-columns:1fr !important; }
+  .bonus-row { grid-template-columns:1fr !important; }
+}
+@media(max-width:500px) {
+  .overview-stats-row { grid-template-columns:1fr !important; }
+}
+
+/* SIDEBAR CLOSE BTN visible on mobile */
+@media(max-width:900px) {
+  .sidebar-close-btn { display:block !important; }
+}
+  width:20px; height:20px; border:2px solid rgba(255,215,0,0.2);
+  border-top-color:var(--gold); border-radius:50%;
+  animation:spin 0.8s linear infinite; display:inline-block;
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeAllSidebars()"></div>
+
+<!-- ===================== LANDING PAGE ===================== -->
+<div id="page-landing" class="page active">
+  <nav class="nav" id="mainNav">
+    <div class="nav-logo" onclick="goTo('landing')">Sakura<span>Bet</span></div>
+    <div class="nav-links">
+      <span class="nav-link" onclick="scrollTo('#games')">Games</span>
+      <span class="nav-link" onclick="scrollTo('#promos')">Promotions</span>
+      <span class="nav-link">VIP Club</span>
+      <span class="nav-link">Support</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-ghost" onclick="goTo('login')">Log In</button>
+      <button class="btn-primary" onclick="goTo('register')">Join Now</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Premium Anime Casino Experience</div>
+      <h1 class="hero-title">
+        <span class="line1">Enter the</span>
+        <span class="line2">World of</span>
+        <span class="line3">SakuraBet</span>
+      </h1>
+      <p class="hero-sub">Where ancient Japanese elegance meets modern casino thrills. Play, win, and ascend to legendary status.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="goTo('register')" style="font-size:18px;padding:16px 44px;">Play Now — It's Free</button>
+        <button class="btn-secondary" onclick="goTo('login')">Sign In</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-val" id="stat1">0</span>
+          <span class="hero-stat-label">Active Players</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val" id="stat2">0</span>
+          <span class="hero-stat-label">Games Available</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val" id="stat3">0</span>
+          <span class="hero-stat-label">Jackpot Pool</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-cards">
+      <div class="floating-card fc1">🃏</div>
+      <div class="floating-card fc2">🎰</div>
+      <div class="floating-card fc3">🀄</div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Baccarat</span><span>Texas Hold'em</span><span>Roulette</span><span>Blackjack</span>
+      <span>Dragon Tiger</span><span>Mahjong</span><span>Sic Bo</span><span>Slots</span>
+      <span>Live Casino</span><span>Sports Betting</span>
+      <span>Baccarat</span><span>Texas Hold'em</span><span>Roulette</span><span>Blackjack</span>
+      <span>Dragon Tiger</span><span>Mahjong</span><span>Sic Bo</span><span>Slots</span>
+      <span>Live Casino</span><span>Sports Betting</span>
+    </div>
+  </div>
+
+  <!-- GAMES -->
+  <section class="section" id="games">
+    <div class="section-header">
+      <div class="section-tag">⟡ Featured Games</div>
+      <h2 class="section-title">Choose Your <span>Battle</span></h2>
+      <p class="section-sub">From ancient Mahjong to modern slots — experience premium casino games crafted for champions.</p>
+    </div>
+    <div class="game-grid">
+      <div class="game-card gc-baccarat" onclick="goTo('login')">
+        <div class="game-card-img">🃏</div>
+        <div class="game-card-body">
+          <div class="game-card-name">Sakura Baccarat</div>
+          <div class="game-card-info">Live dealer • HD streaming • Side bets</div>
+          <div class="game-card-footer">
+            <span class="game-rtp">RTP 98.9%</span>
+            <span class="game-players">🔥 2,341 playing</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card gc-slots" onclick="goTo('login')">
+        <div class="game-card-img">🎰</div>
+        <div class="game-card-body">
+          <div class="game-card-name">Ninja Fortune Slots</div>
+          <div class="game-card-info">5-reel • Progressive jackpot • Free spins</div>
+          <div class="game-card-footer">
+            <span class="game-rtp">RTP 97.3%</span>
+            <span class="game-players">🔥 4,872 playing</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card gc-poker" onclick="goTo('login')">
+        <div class="game-card-img">♠️</div>
+        <div class="game-card-body">
+          <div class="game-card-name">Samurai Hold'em</div>
+          <div class="game-card-info">Texas Hold'em • Tournaments • Multi-table</div>
+          <div class="game-card-footer">
+            <span class="game-rtp">RTP 99.4%</span>
+            <span class="game-players">🔥 1,209 playing</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card gc-roulette" onclick="goTo('login')">
+        <div class="game-card-img">🎡</div>
+        <div class="game-card-body">
+          <div class="game-card-name">Dragon Roulette</div>
+          <div class="game-card-info">European & American • Live dealer</div>
+          <div class="game-card-footer">
+            <span class="game-rtp">RTP 97.3%</span>
+            <span class="game-players">🔥 987 playing</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card gc-blackjack" onclick="goTo('login')">
+        <div class="game-card-img">🎴</div>
+        <div class="game-card-body">
+          <div class="game-card-name">Shogun Blackjack</div>
+          <div class="game-card-info">Multi-hand • Perfect pairs • Side bets</div>
+          <div class="game-card-footer">
+            <span class="game-rtp">RTP 99.5%</span>
+            <span class="game-players">🔥 3,104 playing</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card gc-mahjong" onclick="goTo('login')">
+        <div class="game-card-img">🀄</div>
+        <div class="game-card-body">
+          <div class="game-card-name">Imperial Mahjong</div>
+          <div class="game-card-info">Traditional rules • Cash tables • Tournaments</div>
+          <div class="game-card-footer">
+            <span class="game-rtp">RTP 98.1%</span>
+            <span class="game-players">🔥 768 playing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMOS -->
+  <section class="section" id="promos" style="background:var(--deep)">
+    <div class="section-header">
+      <div class="section-tag">⟡ Promotions</div>
+      <h2 class="section-title">Exclusive <span>Rewards</span></h2>
+      <p class="section-sub">Level up your play with generous bonuses, tournaments, and VIP perks.</p>
+    </div>
+    <div class="promo-grid">
+      <div class="promo-card promo-gold">
+        <div class="promo-tag">🎁 Welcome Bonus</div>
+        <div class="promo-title">500% First Deposit Match</div>
+        <div class="promo-desc">Start your journey with a massive boost. Claim up to $500,000 on your very first deposit. Plus 200 free spins on Ninja Fortune Slots!</div>
+        <button class="btn-primary" onclick="goTo('register')">Claim Bonus</button>
+        <div class="promo-decor">🏆</div>
+      </div>
+      <div class="promo-card promo-red">
+        <div class="promo-tag">⚔️ Weekly Tournament</div>
+        <div class="promo-title">Samurai Grand Prix</div>
+        <div class="promo-desc">Compete in our weekly poker tournament with a guaranteed prize pool of $2,000,000. Registration closes every Sunday midnight.</div>
+        <button class="btn-primary" onclick="goTo('register')">Enter Now</button>
+        <div class="promo-decor">⚔️</div>
+      </div>
+      <div class="promo-card promo-red">
+        <div class="promo-tag">🌸 VIP Loyalty</div>
+        <div class="promo-title">Sakura VIP Club</div>
+        <div class="promo-desc">6 exclusive tiers from Bronze to Immortal. Earn loyalty points with every bet and unlock private tables, personal managers, and luxury gifts.</div>
+        <button class="btn-secondary" onclick="goTo('register')">View Tiers</button>
+        <div class="promo-decor">🌸</div>
+      </div>
+      <div class="promo-card promo-gold">
+        <div class="promo-tag">💰 Cashback</div>
+        <div class="promo-title">Weekly Cashback Up to 30%</div>
+        <div class="promo-desc">Never lose alone. Get cashback on your weekly net losses. Higher VIP tier means higher cashback rate, automatically credited every Monday.</div>
+        <button class="btn-secondary" onclick="goTo('register')">Learn More</button>
+        <div class="promo-decor">💴</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">Sakura<span style="color:var(--crimson-bright)">Bet</span></div>
+        <p class="footer-desc">Premium anime-themed online casino. Licensed and regulated. Responsible gambling is our commitment. 18+ only.</p>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          <span class="badge badge-gold">Licensed</span>
+          <span class="badge badge-green">SSL Secured</span>
+          <span class="badge badge-cyan">18+</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Games</div>
+        <ul class="footer-links">
+          <li><a href="#">Baccarat</a></li>
+          <li><a href="#">Slots</a></li>
+          <li><a href="#">Poker</a></li>
+          <li><a href="#">Roulette</a></li>
+          <li><a href="#">Blackjack</a></li>
+          <li><a href="#">Mahjong</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">VIP Program</a></li>
+          <li><a href="#">Affiliates</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Support</div>
+        <ul class="footer-links">
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Live Chat</a></li>
+          <li><a href="#">Responsible Gambling</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 SakuraBet. All rights reserved. Powered by KingzTech.</div>
+      <div class="footer-legal">Gambling can be addictive. Please play responsibly. 18+ only.</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===================== LOGIN PAGE ===================== -->
+<div id="page-login" class="page">
+  <div class="auth-page">
+    <div class="auth-bg"></div>
+    <div class="auth-grid-bg"></div>
+    <div class="auth-box">
+      <div class="auth-logo" onclick="goTo('landing')">Sakura<span>Bet</span></div>
+      <div class="auth-tagline">Premium Anime Casino</div>
+      <div class="auth-title">Welcome Back</div>
+      <div class="auth-sub">Sign in to your account to continue playing</div>
+
+      <div class="auth-social">
+        <button class="auth-social-btn">🌐 Google</button>
+        <button class="auth-social-btn">📘 Facebook</button>
+      </div>
+      <div class="divider"><span>or sign in with email</span></div>
+
+      <div class="input-wrap">
+        <label class="input-label">Email Address</label>
+        <input class="input-field" type="email" placeholder="you@example.com" id="login-email">
+        <span class="input-icon">✉</span>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">Password</label>
+        <input class="input-field" type="password" placeholder="••••••••" id="login-password">
+        <span class="input-icon" onclick="togglePw('login-password', this)">👁</span>
+      </div>
+      <span class="forgot-link" onclick="goTo('forgot')">Forgot password?</span>
+      <div style="clear:both;margin-bottom:8px;"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);cursor:pointer;">
+          <input type="checkbox" style="accent-color:var(--crimson);"> Remember me
+        </label>
+      </div>
+
+      <button class="btn-primary" style="width:100%;text-align:center;padding:14px;" onclick="doLogin()">
+        Sign In to Play
+      </button>
+
+      <div class="auth-footer">
+        Don't have an account? <a onclick="goTo('register')">Create one now</a>
+      </div>
+      <div style="text-align:center;margin-top:12px;">
+        <a onclick="goTo('admin')" style="font-size:11px;color:var(--text-dim);cursor:pointer;letter-spacing:1px;">
+          🔐 Admin Access
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== REGISTER PAGE ===================== -->
+<div id="page-register" class="page">
+  <div class="auth-page">
+    <div class="auth-bg"></div>
+    <div class="auth-grid-bg"></div>
+    <div class="auth-box" style="max-width:520px;">
+      <div class="auth-logo" onclick="goTo('landing')">Sakura<span>Bet</span></div>
+      <div class="auth-tagline">Join 500,000+ Players</div>
+      <div class="auth-title">Create Account</div>
+      <div class="auth-sub">Start your journey — it takes less than 60 seconds</div>
+
+      <div class="auth-social">
+        <button class="auth-social-btn">🌐 Google</button>
+        <button class="auth-social-btn">📘 Facebook</button>
+      </div>
+      <div class="divider"><span>or register with email</span></div>
+
+      <div class="two-col">
+        <div class="input-wrap">
+          <label class="input-label">First Name</label>
+          <input class="input-field" type="text" placeholder="Sakura">
+        </div>
+        <div class="input-wrap">
+          <label class="input-label">Last Name</label>
+          <input class="input-field" type="text" placeholder="Yamamoto">
+        </div>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">Username</label>
+        <input class="input-field" type="text" placeholder="dragon_master_99">
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">Email Address</label>
+        <input class="input-field" type="email" placeholder="you@example.com">
+      </div>
+      <div class="two-col">
+        <div class="input-wrap">
+          <label class="input-label">Password</label>
+          <input class="input-field" type="password" placeholder="••••••••" id="reg-pw">
+          <span class="input-icon" onclick="togglePw('reg-pw', this)">👁</span>
+        </div>
+        <div class="input-wrap">
+          <label class="input-label">Confirm Password</label>
+          <input class="input-field" type="password" placeholder="••••••••">
+        </div>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">Country</label>
+        <select class="input-field select-field">
+          <option>🇯🇵 Japan</option>
+          <option>🇰🇷 South Korea</option>
+          <option>🇨🇳 China</option>
+          <option>🇺🇸 United States</option>
+          <option>🇬🇧 United Kingdom</option>
+          <option>🇦🇺 Australia</option>
+          <option>🌍 Other</option>
+        </select>
+      </div>
+      <div class="terms-check">
+        <input type="checkbox" id="terms-check">
+        <label for="terms-check">I am 18+ years old and agree to the <a href="#">Terms of Service</a>, <a href="#">Privacy Policy</a>, and <a href="#">Responsible Gambling Policy</a>.</label>
+      </div>
+
+      <button class="btn-primary" style="width:100%;text-align:center;padding:14px;" onclick="doRegister()">
+        Create My Account 🎌
+      </button>
+
+      <div class="auth-footer">
+        Already have an account? <a onclick="goTo('login')">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== FORGOT PASSWORD PAGE ===================== -->
+<div id="page-forgot" class="page">
+  <div class="auth-page">
+    <div class="auth-bg"></div>
+    <div class="auth-grid-bg"></div>
+    <div class="auth-box" id="forgot-step1">
+      <div class="auth-logo" onclick="goTo('landing')">Sakura<span>Bet</span></div>
+      <div class="auth-tagline">Account Recovery</div>
+      <div class="auth-title">Reset Password</div>
+      <div class="auth-sub">Enter your email and we'll send you a recovery code</div>
+
+      <div class="input-wrap" style="margin-top:28px;">
+        <label class="input-label">Email Address</label>
+        <input class="input-field" type="email" placeholder="your@email.com" id="forgot-email">
+        <span class="input-icon">✉</span>
+      </div>
+
+      <button class="btn-primary" style="width:100%;text-align:center;padding:14px;" onclick="sendOTP()">
+        Send Recovery Code
+      </button>
+      <div style="height:16px;"></div>
+      <button class="btn-secondary" style="width:100%;text-align:center;padding:13px;" onclick="goTo('login')">
+        Back to Sign In
+      </button>
+    </div>
+
+    <div class="auth-box" id="forgot-step2" style="display:none;">
+      <div class="auth-logo">Sakura<span style="color:var(--crimson-bright)">Bet</span></div>
+      <div class="auth-tagline">Verification Code</div>
+      <div class="auth-title">Check Your Email</div>
+      <div class="auth-sub" id="forgot-sent-to">We sent a 6-digit code to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c4bdabb1b684a1a9a5ada8eaa7aba9">[email&#160;protected]</a></div>
+      <div style="height:24px;"></div>
+      <div class="otp-inputs">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this)">
+      </div>
+      <button class="btn-primary" style="width:100%;text-align:center;padding:14px;" onclick="verifyOTP()">
+        Verify Code
+      </button>
+    </div>
+
+    <div class="auth-box" id="forgot-step3" style="display:none;">
+      <div class="auth-logo">Sakura<span style="color:var(--crimson-bright)">Bet</span></div>
+      <div class="auth-tagline">New Password</div>
+      <div class="auth-title">Set New Password</div>
+      <div class="auth-sub">Choose a strong password to protect your account</div>
+      <div style="height:24px;"></div>
+      <div class="input-wrap">
+        <label class="input-label">New Password</label>
+        <input class="input-field" type="password" placeholder="••••••••">
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">Confirm New Password</label>
+        <input class="input-field" type="password" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" style="width:100%;text-align:center;padding:14px;" onclick="resetDone()">
+        Update Password
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PLAYER DASHBOARD ===================== -->
+<div id="page-dashboard" class="page">
+  <div class="dash-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="playerSidebar">
+      <div class="sidebar-head">
+        <div>
+          <div class="sidebar-logo">Sakura<span>Bet</span></div>
+          <div class="sidebar-tag">Player Portal</div>
+        </div>
+        <button onclick="closeAllSidebars()" style="background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;display:none;" class="sidebar-close-btn" id="playerCloseBtn">✕</button>
+      </div>
+      <div class="sidebar-body">
+        <div class="sidebar-section-title">Main</div>
+        <div class="sidebar-item active" onclick="dashTab('overview', this)">
+          <span class="sidebar-icon">🏠</span> Overview
+        </div>
+        <div class="sidebar-item" onclick="dashTab('games', this)">
+          <span class="sidebar-icon">🎮</span> Games Lobby
+        </div>
+        <div class="sidebar-item" onclick="dashTab('wallet', this)">
+          <span class="sidebar-icon">💰</span> Wallet
+        </div>
+        <div class="sidebar-item" onclick="dashTab('history', this)">
+          <span class="sidebar-icon">📋</span> Bet History
+        </div>
+        <div class="sidebar-section-title">Account</div>
+        <div class="sidebar-item" onclick="dashTab('bonuses', this)">
+          <span class="sidebar-icon">🎁</span> Bonuses
+          <span class="sidebar-badge">3</span>
+        </div>
+        <div class="sidebar-item" onclick="dashTab('vip', this)">
+          <span class="sidebar-icon">👑</span> VIP Status
+        </div>
+        <div class="sidebar-item" onclick="dashTab('settings', this)">
+          <span class="sidebar-icon">⚙️</span> Settings
+        </div>
+        <div class="sidebar-item" onclick="dashTab('support', this)">
+          <span class="sidebar-icon">💬</span> Support
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">🦅</div>
+          <div>
+            <div class="sidebar-user-name">Dragon_Master</div>
+            <div class="sidebar-user-role">Gold Member</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn-ghost" style="width:100%;color:var(--crimson-bright);font-size:12px;" onclick="goTo('landing')">⬅ Logout</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dash-main">
+      <div class="dash-topbar">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <button class="hamburger" onclick="toggleSidebar('playerSidebar')">☰</button>
+          <div class="topbar-title" id="dash-page-title">Overview</div>
+        </div>
+        <div class="topbar-right">
+          <div class="search-bar">
+            <input class="search-input" placeholder="Search games...">
+            <button class="search-btn">🔍</button>
+          </div>
+          <button class="topbar-btn">
+            🔔 <span class="topbar-notif-dot"></span>
+          </button>
+          <div class="avatar">DM</div>
+        </div>
+      </div>
+
+      <div class="dash-content">
+
+        <!-- OVERVIEW TAB -->
+        <div id="dtab-overview" class="tab-content active">
+
+          <!-- GREETING BANNER -->
+          <div style="background:linear-gradient(135deg,rgba(201,0,43,0.25) 0%,rgba(124,77,255,0.15) 50%,rgba(255,183,197,0.08) 100%);border:1px solid rgba(255,215,0,0.15);padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:relative;overflow:hidden;">
+            <div style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:80px;opacity:0.07;line-height:1;">🌸</div>
+            <div>
+              <div style="font-size:11px;letter-spacing:3px;color:var(--sakura);text-transform:uppercase;margin-bottom:4px;">Welcome Back</div>
+              <div style="font-family:'Cinzel Decorative',cursive;font-size:20px;color:var(--text);">Dragon_Master 🦅</div>
+              <div style="font-size:13px;color:var(--text-dim);margin-top:4px;">Last seen: Today at 2:31 PM · <span style="color:var(--green);">● Online</span></div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn-primary" style="padding:10px 22px;font-size:13px;" onclick="dashTab('games',document.querySelector('#playerSidebar .sidebar-item:nth-child(3)'))">🎮 Play Now</button>
+              <button class="btn-secondary" style="padding:9px 20px;font-size:13px;" onclick="showModal('depositModal')">💳 Deposit</button>
+            </div>
+          </div>
+
+          <!-- BALANCE + STATS ROW -->
+          <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;margin-bottom:20px;" class="overview-stats-row">
+            <!-- BIG BALANCE CARD -->
+            <div style="background:linear-gradient(135deg,#1a0020,#0d0820);border:1px solid rgba(255,215,0,0.25);padding:20px 22px;position:relative;overflow:hidden;">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--crimson),var(--gold));"></div>
+              <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,215,0,0.6);margin-bottom:6px;">Total Balance</div>
+              <div style="font-family:'Cinzel Decorative',cursive;font-size:28px;color:var(--gold);line-height:1.1;margin-bottom:2px;"><span style="font-size:18px;">$</span>1,428.50</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:14px;">+ $250.00 bonus balance</div>
+              <div style="display:flex;gap:8px;">
+                <button onclick="showModal('depositModal')" style="background:var(--crimson);border:none;color:white;padding:7px 14px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;flex:1;text-transform:uppercase;">+ Add</button>
+                <button onclick="showModal('withdrawModal')" style="background:transparent;border:1px solid rgba(255,215,0,0.3);color:var(--gold);padding:7px 14px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;flex:1;text-transform:uppercase;">Withdraw</button>
+              </div>
+            </div>
+            <!-- MINI STATS -->
+            <div style="background:var(--surface);border:1px solid var(--border);padding:18px;display:flex;flex-direction:column;justify-content:center;position:relative;">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),#00b248);"></div>
+              <div style="font-size:22px;margin-bottom:6px;">🏆</div>
+              <div style="font-family:'Cinzel Decorative',cursive;font-size:20px;color:var(--green);">$2,840</div>
+              <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:3px;">This Week Won</div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);padding:18px;display:flex;flex-direction:column;justify-content:center;position:relative;">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),#0097a7);"></div>
+              <div style="font-size:22px;margin-bottom:6px;">🎯</div>
+              <div style="font-family:'Cinzel Decorative',cursive;font-size:20px;color:var(--cyan);">68%</div>
+              <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:3px;">Win Rate</div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);padding:18px;display:flex;flex-direction:column;justify-content:center;position:relative;">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-dim));"></div>
+              <div style="font-size:22px;margin-bottom:6px;">🎮</div>
+              <div style="font-family:'Cinzel Decorative',cursive;font-size:20px;color:var(--gold);">142</div>
+              <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:3px;">Games Played</div>
+            </div>
+          </div>
+
+          <!-- LEVEL PROGRESS -->
+          <div style="background:var(--surface);border:1px solid var(--border);padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+            <div style="width:52px;height:52px;flex-shrink:0;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:var(--midnight);font-family:'Cinzel Decorative',cursive;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);">G</div>
+            <div style="flex:1;min-width:160px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <div style="font-family:'Cinzel Decorative',cursive;font-size:14px;color:var(--gold);">Gold Samurai — Lv.24</div>
+                <div style="font-size:12px;color:var(--text-dim);">72% → Platinum</div>
+              </div>
+              <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;"><div style="width:72%;height:100%;background:linear-gradient(90deg,var(--crimson),var(--gold));border-radius:4px;"></div></div>
+              <div style="font-size:11px;color:var(--text-dim);margin-top:4px;">4,280 XP to next rank · 148,420 total XP</div>
+            </div>
+            <div style="display:flex;gap:16px;flex-shrink:0;">
+              <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--gold);">15%</div><div style="font-size:10px;color:var(--text-dim);letter-spacing:1px;">CASHBACK</div></div>
+              <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--cyan);">3</div><div style="font-size:10px;color:var(--text-dim);letter-spacing:1px;">BONUSES</div></div>
+            </div>
+          </div>
+
+          <!-- QUICK PLAY + RECENT ACTIVITY -->
+          <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:20px;margin-bottom:20px;" class="overview-mid-row">
+            <!-- QUICK PLAY -->
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">⚡ Quick Play</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div onclick="notify('Launching Baccarat...','info')" style="display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);padding:12px 16px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(255,215,0,0.35)'" onmouseout="this.style.borderColor='var(--border)'">
+                  <span style="font-size:24px;">🃏</span>
+                  <div style="flex:1;"><div style="font-weight:700;font-size:14px;">Sakura Baccarat</div><div style="font-size:11px;color:var(--text-dim);">2,341 playing now</div></div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span style="font-size:11px;color:var(--green);font-weight:700;">RTP 98.9%</span><span style="background:var(--crimson);color:white;font-size:10px;padding:2px 8px;font-weight:700;letter-spacing:1px;">PLAY</span></div>
+                </div>
+                <div onclick="notify('Launching Slots...','info')" style="display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);padding:12px 16px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(255,215,0,0.35)'" onmouseout="this.style.borderColor='var(--border)'">
+                  <span style="font-size:24px;">🎰</span>
+                  <div style="flex:1;"><div style="font-weight:700;font-size:14px;">Ninja Fortune Slots</div><div style="font-size:11px;color:var(--text-dim);">Jackpot: $48,200</div></div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span style="font-size:11px;color:var(--gold);font-weight:700;">🔥 HOT</span><span style="background:var(--crimson);color:white;font-size:10px;padding:2px 8px;font-weight:700;letter-spacing:1px;">PLAY</span></div>
+                </div>
+                <div onclick="notify('Launching Poker...','info')" style="display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);padding:12px 16px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(255,215,0,0.35)'" onmouseout="this.style.borderColor='var(--border)'">
+                  <span style="font-size:24px;">♠️</span>
+                  <div style="flex:1;"><div style="font-weight:700;font-size:14px;">Samurai Hold'em</div><div style="font-size:11px;color:var(--text-dim);">Tournament starts in 12m</div></div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span style="font-size:11px;color:var(--cyan);font-weight:700;">RTP 99.4%</span><span style="background:var(--crimson);color:white;font-size:10px;padding:2px 8px;font-weight:700;letter-spacing:1px;">PLAY</span></div>
+                </div>
+                <div onclick="notify('Launching Blackjack...','info')" style="display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);padding:12px 16px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(255,215,0,0.35)'" onmouseout="this.style.borderColor='var(--border)'">
+                  <span style="font-size:24px;">🎴</span>
+                  <div style="flex:1;"><div style="font-weight:700;font-size:14px;">Shogun Blackjack</div><div style="font-size:11px;color:var(--text-dim);">3,104 playing now</div></div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span style="font-size:11px;color:var(--green);font-weight:700;">RTP 99.5%</span><span style="background:var(--crimson);color:white;font-size:10px;padding:2px 8px;font-weight:700;letter-spacing:1px;">PLAY</span></div>
+                </div>
+              </div>
+              <button onclick="dashTab('games',null)" style="width:100%;margin-top:10px;background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(255,215,0,0.3)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-dim)'">View All Games →</button>
+            </div>
+
+            <!-- RECENT ACTIVITY + BONUS -->
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">📋 Recent Bets</div>
+              <div style="background:var(--surface);border:1px solid var(--border);overflow:hidden;margin-bottom:16px;">
+                <table class="data-table">
+                  <thead><tr><th>Game</th><th>Bet</th><th>Result</th></tr></thead>
+                  <tbody>
+                    <tr><td>🃏 Baccarat<span class="sub">2 min ago</span></td><td>$50</td><td style="color:var(--green);font-weight:700;">+$45</td></tr>
+                    <tr><td>🎰 Slots<span class="sub">15 min ago</span></td><td>$10</td><td style="color:var(--crimson-bright);font-weight:700;">-$10</td></tr>
+                    <tr><td>♠️ Poker<span class="sub">1h ago</span></td><td>$100</td><td style="color:var(--green);font-weight:700;">+$182</td></tr>
+                    <tr><td>🎡 Roulette<span class="sub">2h ago</span></td><td>$35</td><td style="color:var(--crimson-bright);font-weight:700;">-$35</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- WIN/LOSS CHART -->
+              <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">📈 7-Day Activity</div>
+              <div class="chart-area" style="height:160px;padding:16px 16px 8px;margin-bottom:0;">
+                <div class="chart-bars" id="playerChart" style="height:100px;"></div>
+                <div class="chart-labels" style="padding:6px 8px 0;">
+                  <span class="chart-label">Mon</span><span class="chart-label">Tue</span><span class="chart-label">Wed</span><span class="chart-label">Thu</span><span class="chart-label">Fri</span><span class="chart-label">Sat</span><span class="chart-label">Sun</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIVE BONUSES ROW -->
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🎁 Active Bonuses</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;" class="bonus-row">
+              <div style="background:var(--surface);border:1px solid rgba(0,230,118,0.2);padding:16px;position:relative;">
+                <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--green);"></div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                  <div style="font-weight:700;font-size:14px;">Welcome Bonus</div>
+                  <span class="badge badge-green">Active</span>
+                </div>
+                <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Wagering: $480 / $1,000</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:48%;"></div></div>
+                <div style="font-size:11px;color:var(--text-dim);margin-top:6px;">Expires Dec 31</div>
+              </div>
+              <div style="background:var(--surface);border:1px solid rgba(255,215,0,0.2);padding:16px;position:relative;">
+                <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);"></div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                  <div style="font-weight:700;font-size:14px;">Free Spins × 45</div>
+                  <span class="badge badge-gold">Use Now</span>
+                </div>
+                <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Ninja Fortune Slots only</div>
+                <button onclick="notify('Free Spins launched! Good luck! 🎰','success')" style="width:100%;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);color:var(--gold);padding:7px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px;">USE SPINS</button>
+              </div>
+              <div style="background:var(--surface);border:1px solid rgba(0,229,255,0.15);padding:16px;position:relative;opacity:0.75;">
+                <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);"></div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                  <div style="font-weight:700;font-size:14px;">Cashback $50</div>
+                  <span class="badge badge-cyan">Monday</span>
+                </div>
+                <div style="font-size:12px;color:var(--text-dim);">Weekly cashback credited automatically every Monday morning.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- GAMES TAB -->
+        <div id="dtab-games" class="tab-content">
+          <div class="tabs">
+            <div class="tab active" onclick="switchTab(this,'gtab-all')">All Games</div>
+            <div class="tab" onclick="switchTab(this,'gtab-live')">Live Casino</div>
+            <div class="tab" onclick="switchTab(this,'gtab-slots')">Slots</div>
+            <div class="tab" onclick="switchTab(this,'gtab-table')">Table Games</div>
+          </div>
+          <div id="gtab-all" class="tab-content active">
+            <div class="mini-game"><div class="mini-game-icon">🃏</div><div><div class="mini-game-name">Sakura Baccarat Live</div><div class="mini-game-info">RTP 98.9% • 2,341 players • Min $100</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">🎰</div><div><div class="mini-game-name">Ninja Fortune Slots</div><div class="mini-game-info">RTP 97.3% • 4,872 players • Min $10</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">♠️</div><div><div class="mini-game-name">Samurai Hold'em Poker</div><div class="mini-game-info">RTP 99.4% • 1,209 players • Min $500</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">🎡</div><div><div class="mini-game-name">Dragon Roulette</div><div class="mini-game-info">RTP 97.3% • 987 players • Min $50</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">🎴</div><div><div class="mini-game-name">Shogun Blackjack</div><div class="mini-game-info">RTP 99.5% • 3,104 players • Min $200</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">🀄</div><div><div class="mini-game-name">Imperial Mahjong</div><div class="mini-game-info">RTP 98.1% • 768 players • Min $200</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">🐉</div><div><div class="mini-game-name">Dragon Tiger</div><div class="mini-game-info">RTP 96.3% • 1,543 players • Min $100</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">🎲</div><div><div class="mini-game-name">Sic Bo Deluxe</div><div class="mini-game-info">RTP 97.2% • 432 players • Min $100</div></div><button class="mini-game-play">Play</button></div>
+          </div>
+          <div id="gtab-live" class="tab-content">
+            <div class="mini-game"><div class="mini-game-icon">🃏</div><div><div class="mini-game-name">Sakura Baccarat Live</div><div class="mini-game-info">RTP 98.9% • Live Dealer • HD Stream</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">🐉</div><div><div class="mini-game-name">Dragon Tiger</div><div class="mini-game-info">RTP 96.3% • Live Dealer</div></div><button class="mini-game-play">Play</button></div>
+          </div>
+          <div id="gtab-slots" class="tab-content">
+            <div class="mini-game"><div class="mini-game-icon">🎰</div><div><div class="mini-game-name">Ninja Fortune Slots</div><div class="mini-game-info">Progressive Jackpot • 4,872 players</div></div><button class="mini-game-play">Play</button></div>
+          </div>
+          <div id="gtab-table" class="tab-content">
+            <div class="mini-game"><div class="mini-game-icon">♠️</div><div><div class="mini-game-name">Samurai Hold'em Poker</div><div class="mini-game-info">Multi-table tournament available</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">🎴</div><div><div class="mini-game-name">Shogun Blackjack</div><div class="mini-game-info">Classic multi-hand • Side bets</div></div><button class="mini-game-play">Play</button></div>
+            <div class="mini-game"><div class="mini-game-icon">🎡</div><div><div class="mini-game-name">Dragon Roulette</div><div class="mini-game-info">European & American rules</div></div><button class="mini-game-play">Play</button></div>
+          </div>
+        </div>
+
+        <!-- WALLET TAB -->
+        <div id="dtab-wallet" class="tab-content">
+          <div class="two-col" style="margin-bottom:24px;">
+            <div class="stat-card sc-gold"><span class="stat-icon">💰</span><span class="stat-val">$142,850</span><span class="stat-label">Main Balance</span></div>
+            <div class="stat-card sc-green"><span class="stat-icon">🎁</span><span class="stat-val">$25,000</span><span class="stat-label">Bonus Balance</span></div>
+          </div>
+          <div class="two-col">
+            <div>
+              <div class="dash-section-title">Deposit</div>
+              <div class="card">
+                <div class="input-wrap"><label class="input-label">Amount ($)</label><input class="input-field" type="number" placeholder="10,000"></div>
+                <div class="input-wrap"><label class="input-label">Payment Method</label>
+                  <select class="input-field select-field">
+                    <option>💳 Credit / Debit Card</option>
+                    <option>🏦 Bank Transfer</option>
+                    <option>₿ Bitcoin</option>
+                    <option>⟠ Ethereum</option>
+                    <option>🅿 PayPal</option>
+                  </select>
+                </div>
+                <button class="btn-primary" style="width:100%;" onclick="notify('Deposit initiated! Processing...','success')">Deposit Now</button>
+              </div>
+            </div>
+            <div>
+              <div class="dash-section-title">Withdraw</div>
+              <div class="card">
+                <div class="input-wrap"><label class="input-label">Amount ($)</label><input class="input-field" type="number" placeholder="50,000"></div>
+                <div class="input-wrap"><label class="input-label">Withdrawal Method</label>
+                  <select class="input-field select-field">
+                    <option>🏦 Bank Transfer</option>
+                    <option>₿ Bitcoin</option>
+                    <option>⟠ Ethereum</option>
+                    <option>🅿 PayPal</option>
+                  </select>
+                </div>
+                <button class="btn-secondary" style="width:100%;" onclick="notify('Withdrawal request submitted!','info')">Request Withdrawal</button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:24px;">
+            <div class="dash-section-title">Transaction History</div>
+            <div class="card" style="padding:0;">
+              <table class="data-table">
+                <thead><tr><th>Type</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>
+                  <tr><td>Deposit</td><td style="color:var(--green)">+$50,000</td><td>Credit Card</td><td><span class="badge badge-green">Complete</span></td><td>Today</td></tr>
+                  <tr><td>Withdrawal</td><td style="color:var(--crimson-bright)">-$20,000</td><td>Bank Transfer</td><td><span class="badge badge-gold">Pending</span></td><td>Yesterday</td></tr>
+                  <tr><td>Deposit</td><td style="color:var(--green)">+$100,000</td><td>Bitcoin</td><td><span class="badge badge-green">Complete</span></td><td>3 days ago</td></tr>
+                  <tr><td>Bonus Credit</td><td style="color:var(--cyan)">+$25,000</td><td>Welcome Bonus</td><td><span class="badge badge-cyan">Bonus</span></td><td>1 week ago</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- BET HISTORY TAB -->
+        <div id="dtab-history" class="tab-content">
+          <div class="dash-section-title">Betting History</div>
+          <div class="card" style="padding:0;">
+            <div style="padding:16px 20px;display:flex;gap:12px;border-bottom:1px solid var(--border);">
+              <select class="select-field" style="max-width:160px;"><option>All Games</option><option>Baccarat</option><option>Slots</option><option>Poker</option></select>
+              <select class="select-field" style="max-width:160px;"><option>All Time</option><option>Today</option><option>This Week</option><option>This Month</option></select>
+            </div>
+            <table class="data-table">
+              <thead><tr><th>Game</th><th>Bet ID</th><th>Wager</th><th>Outcome</th><th>Profit</th><th>Date</th></tr></thead>
+              <tbody>
+                <tr><td>🃏 Baccarat</td><td style="color:var(--text-dim);font-size:12px;">#BT-00412</td><td>$5,000</td><td><span class="badge badge-green">WIN</span></td><td style="color:var(--green)">+$4,500</td><td>2m ago</td></tr>
+                <tr><td>🎰 Slots</td><td style="color:var(--text-dim);font-size:12px;">#BT-00411</td><td>$1,000</td><td><span class="badge badge-red">LOSS</span></td><td style="color:var(--crimson-bright)">-$1,000</td><td>15m ago</td></tr>
+                <tr><td>♠️ Poker</td><td style="color:var(--text-dim);font-size:12px;">#BT-00410</td><td>$10,000</td><td><span class="badge badge-green">WIN</span></td><td style="color:var(--green)">+$18,200</td><td>1h ago</td></tr>
+                <tr><td>🎡 Roulette</td><td style="color:var(--text-dim);font-size:12px;">#BT-00409</td><td>$3,500</td><td><span class="badge badge-red">LOSS</span></td><td style="color:var(--crimson-bright)">-$3,500</td><td>2h ago</td></tr>
+                <tr><td>🎴 Blackjack</td><td style="color:var(--text-dim);font-size:12px;">#BT-00408</td><td>$2,000</td><td><span class="badge badge-green">WIN</span></td><td style="color:var(--green)">+$1,900</td><td>3h ago</td></tr>
+                <tr><td>🀄 Mahjong</td><td style="color:var(--text-dim);font-size:12px;">#BT-00407</td><td>$8,000</td><td><span class="badge badge-green">WIN</span></td><td style="color:var(--green)">+$6,400</td><td>5h ago</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BONUSES TAB -->
+        <div id="dtab-bonuses" class="tab-content">
+          <div class="dash-section-title">My Bonuses</div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+                <div><div style="font-family:'Cinzel Decorative',cursive;font-size:16px;margin-bottom:4px;">Welcome Package</div><div style="font-size:13px;color:var(--text-dim);">500% match bonus on first deposit</div></div>
+                <span class="badge badge-green">Active</span>
+              </div>
+              <div class="progress-wrap"><div class="progress-label"><span>Wagering Progress</span><span>$48,000 / $100,000</span></div><div class="progress-bar"><div class="progress-fill" style="width:48%;"></div></div></div>
+              <div style="font-size:12px;color:var(--text-dim);">Expires: Dec 31, 2025</div>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+                <div><div style="font-family:'Cinzel Decorative',cursive;font-size:16px;margin-bottom:4px;">Free Spins × 45</div><div style="font-size:13px;color:var(--text-dim);">Valid on Ninja Fortune Slots only</div></div>
+                <span class="badge badge-gold">Pending</span>
+              </div>
+              <button class="btn-primary" style="margin-top:8px;" onclick="notify('Free Spins activated! Launching game...','success')">Use Now</button>
+            </div>
+            <div class="card" style="opacity:0.6;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div><div style="font-family:'Cinzel Decorative',cursive;font-size:16px;margin-bottom:4px;">Cashback $5,000</div><div style="font-size:13px;color:var(--text-dim);">Weekly cashback — credited next Monday</div></div>
+                <span class="badge badge-cyan">Upcoming</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIP TAB -->
+        <div id="dtab-vip" class="tab-content">
+          <div class="dash-section-title">VIP Program</div>
+          <div class="level-card" style="margin-bottom:24px;">
+            <div class="level-badge">G</div>
+            <div class="level-info">
+              <div class="level-title">Gold Samurai — Level 24</div>
+              <div class="level-sub">4,280 XP needed to reach Platinum Shogun</div>
+              <div class="progress-wrap" style="margin-bottom:0;"><div class="progress-bar"><div class="progress-fill" style="width:72%;"></div></div></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+            <div class="stat-card sc-cyan"><span class="stat-icon">💎</span><span class="stat-val">148,420</span><span class="stat-label">Total Points</span></div>
+            <div class="stat-card sc-gold"><span class="stat-icon">🏆</span><span class="stat-val">15%</span><span class="stat-label">Cashback Rate</span></div>
+            <div class="stat-card sc-purple"><span class="stat-icon">🎯</span><span class="stat-val">24</span><span class="stat-label">Current Level</span></div>
+          </div>
+          <div style="margin-top:28px;">
+            <div class="dash-section-title">Tier Progression</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--surface);border:1px solid var(--border);opacity:0.5;"><span style="font-size:18px;">🥉</span><div style="flex:1;"><div style="font-weight:700;font-size:14px;">Bronze Apprentice</div><div style="font-size:12px;color:var(--text-dim);">0 — 10,000 XP</div></div><span class="badge badge-green">Completed</span></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--surface);border:1px solid var(--border);opacity:0.5;"><span style="font-size:18px;">🥈</span><div style="flex:1;"><div style="font-weight:700;font-size:14px;">Silver Ninja</div><div style="font-size:12px;color:var(--text-dim);">10,000 — 50,000 XP</div></div><span class="badge badge-green">Completed</span></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:rgba(255,215,0,0.06);border:2px solid rgba(255,215,0,0.3);"><span style="font-size:18px;">🥇</span><div style="flex:1;"><div style="font-weight:700;font-size:14px;color:var(--gold);">Gold Samurai</div><div style="font-size:12px;color:var(--text-dim);">50,000 — 200,000 XP • Currently here</div></div><span class="badge badge-gold">Current</span></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--surface);border:1px solid var(--border);"><span style="font-size:18px;">⚔️</span><div style="flex:1;"><div style="font-weight:700;font-size:14px;">Platinum Shogun</div><div style="font-size:12px;color:var(--text-dim);">200,000 — 600,000 XP</div></div></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--surface);border:1px solid var(--border);"><span style="font-size:18px;">👑</span><div style="flex:1;"><div style="font-weight:700;font-size:14px;">Diamond Shogun</div><div style="font-size:12px;color:var(--text-dim);">600,000 — 2,000,000 XP</div></div></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--surface);border:1px solid var(--border);"><span style="font-size:18px;">🌸</span><div style="flex:1;"><div style="font-weight:700;font-size:14px;">Immortal Emperor</div><div style="font-size:12px;color:var(--text-dim);">2,000,000+ XP • Invite only</div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="dtab-settings" class="tab-content">
+          <div class="two-col">
+            <div>
+              <div class="dash-section-title">Profile Settings</div>
+              <div class="card" style="margin-bottom:24px;">
+                <div style="display:flex;gap:16px;align-items:center;margin-bottom:24px;">
+                  <div style="width:64px;height:64px;border-radius:50%;border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:28px;background:rgba(255,215,0,0.1);">🦅</div>
+                  <div><div style="font-weight:700;font-size:16px;">Dragon_Master</div><div style="font-size:12px;color:var(--text-dim);">Gold Member • Level 24</div><button style="margin-top:6px;font-size:11px;color:var(--cyan);background:none;border:1px solid rgba(0,229,255,0.3);padding:4px 10px;cursor:pointer;letter-spacing:1px;">Change Avatar</button></div>
+                </div>
+                <div class="input-wrap"><label class="input-label">Display Name</label><input class="input-field" value="Dragon_Master"></div>
+                <div class="input-wrap"><label class="input-label">Email</label><input class="input-field" value="dragonmaster@email.com"></div>
+                <div class="input-wrap"><label class="input-label">Phone Number</label><input class="input-field" value="+81 90-1234-5678"></div>
+                <button class="btn-primary" onclick="notify('Profile saved!','success')">Save Changes</button>
+              </div>
+              <div class="dash-section-title">Change Password</div>
+              <div class="card">
+                <div class="input-wrap"><label class="input-label">Current Password</label><input class="input-field" type="password" placeholder="••••••••"></div>
+                <div class="input-wrap"><label class="input-label">New Password</label><input class="input-field" type="password" placeholder="••••••••"></div>
+                <div class="input-wrap"><label class="input-label">Confirm New</label><input class="input-field" type="password" placeholder="••••••••"></div>
+                <button class="btn-primary" onclick="notify('Password updated!','success')">Update Password</button>
+              </div>
+            </div>
+            <div>
+              <div class="dash-section-title">Preferences</div>
+              <div class="card" style="margin-bottom:24px;">
+                <div style="display:flex;flex-direction:column;gap:20px;">
+                  <div class="toggle-wrap"><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div><div class="toggle-label">Email Notifications</div></div>
+                  <div class="toggle-wrap"><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div><div class="toggle-label">SMS Alerts for Wins</div></div>
+                  <div class="toggle-wrap"><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div><div class="toggle-label">Two-Factor Authentication</div></div>
+                  <div class="toggle-wrap"><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div><div class="toggle-label">Sound Effects</div></div>
+                  <div class="toggle-wrap"><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div><div class="toggle-label">Auto-Accept Bonuses</div></div>
+                </div>
+              </div>
+              <div class="dash-section-title">Responsible Gambling</div>
+              <div class="card">
+                <div style="font-size:13px;color:var(--text-dim);margin-bottom:16px;line-height:1.7;">Set limits to keep your gaming healthy and in control.</div>
+                <div class="input-wrap"><label class="input-label">Daily Deposit Limit ($)</label><input class="input-field" placeholder="e.g. 50,000"></div>
+                <div class="input-wrap"><label class="input-label">Daily Loss Limit ($)</label><input class="input-field" placeholder="e.g. 30,000"></div>
+                <div class="input-wrap"><label class="input-label">Session Time Limit (Hours)</label><input class="input-field" placeholder="e.g. 4"></div>
+                <button class="btn-secondary" style="width:100%;" onclick="notify('Limits updated!','info')">Set Limits</button>
+                <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+                  <button style="background:none;border:1px solid rgba(255,23,68,0.3);color:var(--crimson-bright);padding:10px 20px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;width:100%;" onclick="notify('Self-exclusion request submitted. Account will be reviewed.','info')">Self-Exclusion</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUPPORT TAB -->
+        <div id="dtab-support" class="tab-content">
+          <div class="two-col">
+            <div>
+              <div class="dash-section-title">Live Support</div>
+              <div class="card" style="padding:0;overflow:hidden;">
+                <div style="background:var(--surface2);padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+                  <div style="width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);"></div>
+                  <span style="font-size:14px;font-weight:700;">Support Agent Online</span>
+                  <span style="font-size:12px;color:var(--text-dim);">Avg. response: 2 min</span>
+                </div>
+                <div id="chat-msgs" style="height:240px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;">
+                  <div style="background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:0 8px 8px 8px;max-width:85%;font-size:13px;line-height:1.6;">
+                    <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px;letter-spacing:1px;">SUPPORT AGENT</div>
+                    こんにちは! Welcome to SakuraBet support. How can I assist you today?
+                  </div>
+                </div>
+                <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:10px;">
+                  <input class="input-field" id="chat-input" placeholder="Type your message..." style="margin:0;" onkeydown="if(event.key==='Enter')sendChat()">
+                  <button class="btn-primary" style="flex-shrink:0;padding:10px 18px;" onclick="sendChat()">Send</button>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="dash-section-title">Quick Help</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div class="mini-game" onclick="notify('Opening FAQ article...','info')"><div class="mini-game-icon">❓</div><div><div class="mini-game-name">How to Deposit</div><div class="mini-game-info">Payment methods and processing times</div></div></div>
+                <div class="mini-game" onclick="notify('Opening FAQ article...','info')"><div class="mini-game-icon">💸</div><div><div class="mini-game-name">Withdrawal Guide</div><div class="mini-game-info">How to withdraw your winnings</div></div></div>
+                <div class="mini-game" onclick="notify('Opening FAQ article...','info')"><div class="mini-game-icon">🎁</div><div><div class="mini-game-name">Bonus Terms</div><div class="mini-game-info">Wagering requirements explained</div></div></div>
+                <div class="mini-game" onclick="notify('Opening FAQ article...','info')"><div class="mini-game-icon">🔒</div><div><div class="mini-game-name">Account Verification</div><div class="mini-game-info">KYC process and required documents</div></div></div>
+              </div>
+              <div class="dash-section-title" style="margin-top:24px;">Submit a Ticket</div>
+              <div class="card">
+                <div class="input-wrap"><label class="input-label">Subject</label><input class="input-field" placeholder="Brief description of your issue"></div>
+                <div class="input-wrap"><label class="input-label">Message</label><textarea class="input-field" rows="4" style="resize:vertical;" placeholder="Please provide details..."></textarea></div>
+                <button class="btn-primary" onclick="notify('Ticket submitted! Ref #TK-00892','success')">Submit Ticket</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end dash-content -->
+    </main>
+  </div>
+</div>
+
+<!-- ===================== ADMIN DASHBOARD ===================== -->
+<div id="page-admin" class="page">
+  <div class="dash-layout">
+    <aside class="sidebar" id="adminSidebar" style="border-right-color:rgba(255,23,68,0.2);">
+      <div class="sidebar-head" style="border-bottom-color:rgba(255,23,68,0.2);">
+        <div>
+          <div class="sidebar-logo">Sakura<span>Bet</span></div>
+          <div class="sidebar-tag" style="color:var(--crimson-bright);">⚡ Admin Control Panel</div>
+        </div>
+        <button onclick="closeAllSidebars()" style="background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;display:none;" class="sidebar-close-btn" id="adminCloseBtn">✕</button>
+      </div>
+      <div class="sidebar-body">
+        <div class="sidebar-section-title">Analytics</div>
+        <div class="sidebar-item active" onclick="adminTab('dashboard', this)">
+          <span class="sidebar-icon">📊</span> Dashboard
+        </div>
+        <div class="sidebar-item" onclick="adminTab('revenue', this)">
+          <span class="sidebar-icon">💹</span> Revenue
+        </div>
+        <div class="sidebar-section-title">Management</div>
+        <div class="sidebar-item" onclick="adminTab('users', this)">
+          <span class="sidebar-icon">👥</span> Users
+          <span class="sidebar-badge">12</span>
+        </div>
+        <div class="sidebar-item" onclick="adminTab('games-admin', this)">
+          <span class="sidebar-icon">🎮</span> Games Manager
+        </div>
+        <div class="sidebar-item" onclick="adminTab('withdrawals', this)">
+          <span class="sidebar-icon">💸</span> Withdrawals
+          <span class="sidebar-badge">7</span>
+        </div>
+        <div class="sidebar-item" onclick="adminTab('bonuses-admin', this)">
+          <span class="sidebar-icon">🎁</span> Bonus Engine
+        </div>
+        <div class="sidebar-section-title">Security</div>
+        <div class="sidebar-item" onclick="adminTab('kyc', this)">
+          <span class="sidebar-icon">🔐</span> KYC Verification
+          <span class="sidebar-badge">5</span>
+        </div>
+        <div class="sidebar-item" onclick="adminTab('alerts', this)">
+          <span class="sidebar-icon">🚨</span> Risk Alerts
+          <span class="sidebar-badge" style="background:var(--gold);color:var(--midnight);">3</span>
+        </div>
+        <div class="sidebar-section-title">System</div>
+        <div class="sidebar-item" onclick="adminTab('config', this)">
+          <span class="sidebar-icon">⚙️</span> Configuration
+        </div>
+        <div class="sidebar-item" onclick="adminTab('logs', this)">
+          <span class="sidebar-icon">📜</span> System Logs
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" style="border-color:var(--crimson-bright);background:rgba(255,23,68,0.1);">👑</div>
+          <div>
+            <div class="sidebar-user-name">Admin KingzTech</div>
+            <div class="sidebar-user-role" style="color:var(--crimson-bright);">Super Admin</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn-ghost" style="width:100%;color:var(--crimson-bright);font-size:12px;" onclick="goTo('landing')">⬅ Exit Admin</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <div class="dash-topbar" style="border-bottom-color:rgba(255,23,68,0.15);">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <button class="hamburger" onclick="toggleSidebar('adminSidebar')">☰</button>
+          <div class="topbar-title" id="admin-page-title" style="color:var(--crimson-bright);">Admin Dashboard</div>
+        </div>
+        <div class="topbar-right">
+          <span class="badge badge-red animate-pulse">LIVE</span>
+          <button class="topbar-btn">🔔<span class="topbar-notif-dot"></span></button>
+          <button class="topbar-btn" onclick="goTo('dashboard')">🎮 Player View</button>
+          <div class="avatar" style="background:linear-gradient(135deg,var(--crimson),#6b0018);">K</div>
+        </div>
+      </div>
+
+      <div class="dash-content">
+
+        <!-- ADMIN DASHBOARD TAB -->
+        <div id="atab-dashboard" class="tab-content active">
+          <div class="stat-grid">
+            <div class="stat-card sc-gold"><span class="stat-icon">💰</span><span class="stat-val">$8.4M</span><span class="stat-label">Today's Revenue</span><span class="stat-delta delta-up">+12.4%</span></div>
+            <div class="stat-card sc-green"><span class="stat-icon">👥</span><span class="stat-val">14,821</span><span class="stat-label">Active Players</span><span class="stat-delta delta-up">+847</span></div>
+            <div class="stat-card sc-red"><span class="stat-icon">🎰</span><span class="stat-val">32,440</span><span class="stat-label">Games Played</span><span class="stat-delta delta-up">+5.2%</span></div>
+            <div class="stat-card sc-cyan"><span class="stat-icon">💸</span><span class="stat-val">$2.1M</span><span class="stat-label">Withdrawals</span><span class="stat-delta delta-down">+18%</span></div>
+            <div class="stat-card sc-purple"><span class="stat-icon">📥</span><span class="stat-val">$6.3M</span><span class="stat-label">Total Deposits</span><span class="stat-delta delta-up">+22%</span></div>
+          </div>
+
+          <div class="two-col" style="margin-bottom:24px;">
+            <div>
+              <div class="chart-area">
+                <div class="chart-title">Revenue Last 14 Days ($ Millions)</div>
+                <div class="chart-bars" id="adminChart"></div>
+                <div class="chart-labels">
+                  <span class="chart-label">M</span><span class="chart-label">T</span><span class="chart-label">W</span>
+                  <span class="chart-label">T</span><span class="chart-label">F</span><span class="chart-label">S</span>
+                  <span class="chart-label">S</span><span class="chart-label">M</span><span class="chart-label">T</span>
+                  <span class="chart-label">W</span><span class="chart-label">T</span><span class="chart-label">F</span>
+                  <span class="chart-label">S</span><span class="chart-label">S</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="dash-section-title">Game Performance</div>
+              <div class="card">
+                <div class="progress-wrap"><div class="progress-label"><span>🃏 Baccarat</span><span>$2.8M</span></div><div class="progress-bar"><div class="progress-fill" style="width:85%;"></div></div></div>
+                <div class="progress-wrap"><div class="progress-label"><span>🎰 Slots</span><span>$2.1M</span></div><div class="progress-bar"><div class="progress-fill" style="width:64%;"></div></div></div>
+                <div class="progress-wrap"><div class="progress-label"><span>♠️ Poker</span><span>$1.5M</span></div><div class="progress-bar"><div class="progress-fill" style="width:46%;"></div></div></div>
+                <div class="progress-wrap"><div class="progress-label"><span>🎴 Blackjack</span><span>$1.2M</span></div><div class="progress-bar"><div class="progress-fill" style="width:37%;"></div></div></div>
+                <div class="progress-wrap" style="margin-bottom:0;"><div class="progress-label"><span>🎡 Roulette</span><span>$0.8M</span></div><div class="progress-bar"><div class="progress-fill" style="width:24%;"></div></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div>
+              <div class="dash-section-title">Recent Registrations</div>
+              <div class="card" style="padding:0;">
+                <table class="data-table">
+                  <thead><tr><th>User</th><th>Country</th><th>Status</th><th>Joined</th></tr></thead>
+                  <tbody>
+                    <tr><td>🦅 SamuraiKing88<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6013010d15120109200d01090c4e030f0d">[email&#160;protected]</a></span></td><td>🇯🇵 JP</td><td><span class="status online"><span class="status-dot"></span>Online</span></td><td>2m ago</td></tr>
+                    <tr><td>🐉 DragonFlame<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb9f899a9c9495bb969a9297d5989496">[email&#160;protected]</a></span></td><td>🇰🇷 KR</td><td><span class="status online"><span class="status-dot"></span>Online</span></td><td>12m ago</td></tr>
+                    <tr><td>🌸 SakuraHime<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="98f0f1f5fdd8f5f9f1f4b6fbf7f5">[email&#160;protected]</a></span></td><td>🇨🇳 CN</td><td><span class="status offline"><span class="status-dot"></span>Offline</span></td><td>1h ago</td></tr>
+                    <tr><td>⚔️ NinjaAce<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e7898e898d86a78a868e8bc984888a">[email&#160;protected]</a></span></td><td>🇺🇸 US</td><td><span class="status pending"><span class="status-dot"></span>Pending KYC</span></td><td>2h ago</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <div class="dash-section-title">Pending Withdrawals</div>
+              <div class="card" style="padding:0;">
+                <table class="data-table">
+                  <thead><tr><th>User</th><th>Amount</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    <tr><td>DragonFlame</td><td style="color:var(--gold);">$85,000</td><td><button class="action-btn approve" onclick="notify('Withdrawal approved!','success')">Approve</button></td></tr>
+                    <tr><td>SakuraHime</td><td style="color:var(--gold);">$120,000</td><td><button class="action-btn approve" onclick="notify('Withdrawal approved!','success')">Approve</button></td></tr>
+                    <tr><td>NinjaAce</td><td style="color:var(--gold);">$45,000</td><td><button class="action-btn ban" onclick="notify('Withdrawal flagged for review!','error')">Flag</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REVENUE TAB -->
+        <div id="atab-revenue" class="tab-content">
+          <div class="stat-grid">
+            <div class="stat-card sc-gold"><span class="stat-icon">📈</span><span class="stat-val">$84.2M</span><span class="stat-label">Monthly Revenue</span><span class="stat-delta delta-up">+18.3%</span></div>
+            <div class="stat-card sc-green"><span class="stat-icon">🏦</span><span class="stat-val">$312M</span><span class="stat-label">Total Volume</span><span class="stat-delta delta-up">+24.1%</span></div>
+            <div class="stat-card sc-red"><span class="stat-icon">📉</span><span class="stat-val">$62M</span><span class="stat-label">Player Payouts</span><span class="stat-delta delta-down">-2.1%</span></div>
+            <div class="stat-card sc-cyan"><span class="stat-icon">💹</span><span class="stat-val">26.9%</span><span class="stat-label">House Edge %</span><span class="stat-delta delta-up">+1.2%</span></div>
+          </div>
+          <div class="chart-area" style="height:260px;">
+            <div class="chart-title">Monthly Revenue Breakdown ($M)</div>
+            <div class="chart-bars" id="revenueChart"></div>
+            <div class="chart-labels">
+              <span class="chart-label">Jan</span><span class="chart-label">Feb</span><span class="chart-label">Mar</span>
+              <span class="chart-label">Apr</span><span class="chart-label">May</span><span class="chart-label">Jun</span>
+              <span class="chart-label">Jul</span><span class="chart-label">Aug</span><span class="chart-label">Sep</span>
+              <span class="chart-label">Oct</span><span class="chart-label">Nov</span><span class="chart-label">Dec</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div id="atab-users" class="tab-content">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+            <div class="dash-section-title" style="margin-bottom:0;">User Management</div>
+            <div style="display:flex;gap:12px;">
+              <div class="search-bar"><input class="search-input" placeholder="Search users..."><button class="search-btn">🔍</button></div>
+              <select class="select-field"><option>All Users</option><option>Online</option><option>Banned</option><option>Pending KYC</option></select>
+            </div>
+          </div>
+          <div class="card" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Balance</th><th>Level</th><th>Status</th><th>Joined</th><th>Total Wagered</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>🦅 SamuraiKing88<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b3c0d2dec6c1d2daf3ded2dadf9dd0dcde">[email&#160;protected]</a> • 🇯🇵</span></td>
+                  <td style="color:var(--gold);">$284,000</td>
+                  <td><span class="badge badge-gold">Gold</span></td>
+                  <td><span class="status online"><span class="status-dot"></span>Online</span></td>
+                  <td>Jan 2024</td>
+                  <td>$1.2M</td>
+                  <td><button class="action-btn edit" onclick="notify('Opening user profile...','info')">Edit</button> <button class="action-btn ban" onclick="notify('User banned!','error')">Ban</button></td>
+                </tr>
+                <tr>
+                  <td>🐉 DragonFlame99<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="55312734323a3b1538343c397b363a38">[email&#160;protected]</a> • 🇰🇷</span></td>
+                  <td style="color:var(--gold);">$520,000</td>
+                  <td><span class="badge badge-cyan">Platinum</span></td>
+                  <td><span class="status online"><span class="status-dot"></span>Online</span></td>
+                  <td>Aug 2023</td>
+                  <td>$4.8M</td>
+                  <td><button class="action-btn edit" onclick="notify('Opening user profile...','info')">Edit</button> <button class="action-btn ban" onclick="notify('User banned!','error')">Ban</button></td>
+                </tr>
+                <tr>
+                  <td>🌸 SakuraHime<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e58d8c8880a588848c89cb868a88">[email&#160;protected]</a> • 🇨🇳</span></td>
+                  <td style="color:var(--gold);">$95,000</td>
+                  <td><span class="badge badge-green">Silver</span></td>
+                  <td><span class="status offline"><span class="status-dot"></span>Offline</span></td>
+                  <td>Mar 2024</td>
+                  <td>$380K</td>
+                  <td><button class="action-btn edit" onclick="notify('Opening user profile...','info')">Edit</button> <button class="action-btn ban" onclick="notify('User banned!','error')">Ban</button></td>
+                </tr>
+                <tr>
+                  <td>⚔️ NinjaAce2024<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aec0c7c0c4cfeec3cfc7c280cdc1c3">[email&#160;protected]</a> • 🇺🇸</span></td>
+                  <td style="color:var(--gold);">$12,000</td>
+                  <td><span class="badge badge-red">Bronze</span></td>
+                  <td><span class="status pending"><span class="status-dot"></span>Pending KYC</span></td>
+                  <td>Nov 2024</td>
+                  <td>$48K</td>
+                  <td><button class="action-btn approve" onclick="notify('KYC approved!','success')">Verify</button> <button class="action-btn ban" onclick="notify('User banned!','error')">Ban</button></td>
+                </tr>
+                <tr>
+                  <td>💀 SpamBot001<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="483b382925083c2d2538662b2725">[email&#160;protected]</a> • 🇺🇸</span></td>
+                  <td style="color:var(--text-dim);">$0</td>
+                  <td><span class="badge badge-red">Flagged</span></td>
+                  <td><span class="status banned"><span class="status-dot"></span>Banned</span></td>
+                  <td>Nov 2024</td>
+                  <td>$0</td>
+                  <td><button class="action-btn edit" onclick="notify('Viewing banned account...','info')">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GAMES MANAGER -->
+        <div id="atab-games-admin" class="tab-content">
+          <div class="dash-section-title">Games Manager</div>
+          <div class="card" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Game</th><th>Status</th><th>Active Players</th><th>Today Revenue</th><th>RTP Set</th><th>Controls</th></tr></thead>
+              <tbody>
+                <tr><td>🃏 Sakura Baccarat Live</td><td><span class="status online"><span class="status-dot"></span>Live</span></td><td>2,341</td><td style="color:var(--green);">$2.8M</td><td>98.9%</td><td><button class="action-btn edit" onclick="notify('Opening game config...','info')">Config</button> <button class="action-btn ban" onclick="notify('Game paused!','error')">Pause</button></td></tr>
+                <tr><td>🎰 Ninja Fortune Slots</td><td><span class="status online"><span class="status-dot"></span>Live</span></td><td>4,872</td><td style="color:var(--green);">$2.1M</td><td>97.3%</td><td><button class="action-btn edit" onclick="notify('Opening game config...','info')">Config</button> <button class="action-btn ban" onclick="notify('Game paused!','error')">Pause</button></td></tr>
+                <tr><td>♠️ Samurai Hold'em</td><td><span class="status online"><span class="status-dot"></span>Live</span></td><td>1,209</td><td style="color:var(--green);">$1.5M</td><td>99.4%</td><td><button class="action-btn edit" onclick="notify('Opening game config...','info')">Config</button> <button class="action-btn ban" onclick="notify('Game paused!','error')">Pause</button></td></tr>
+                <tr><td>🎡 Dragon Roulette</td><td><span class="status pending"><span class="status-dot"></span>Maintenance</span></td><td>0</td><td style="color:var(--text-dim);">$0</td><td>97.3%</td><td><button class="action-btn approve" onclick="notify('Game resumed!','success')">Resume</button></td></tr>
+                <tr><td>🎴 Shogun Blackjack</td><td><span class="status online"><span class="status-dot"></span>Live</span></td><td>3,104</td><td style="color:var(--green);">$1.2M</td><td>99.5%</td><td><button class="action-btn edit" onclick="notify('Opening game config...','info')">Config</button> <button class="action-btn ban" onclick="notify('Game paused!','error')">Pause</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- WITHDRAWALS -->
+        <div id="atab-withdrawals" class="tab-content">
+          <div class="dash-section-title">Withdrawal Requests</div>
+          <div class="stat-grid" style="margin-bottom:24px;">
+            <div class="stat-card sc-gold"><span class="stat-icon">⏳</span><span class="stat-val">7</span><span class="stat-label">Pending</span></div>
+            <div class="stat-card sc-green"><span class="stat-icon">✅</span><span class="stat-val">142</span><span class="stat-label">Approved Today</span></div>
+            <div class="stat-card sc-red"><span class="stat-icon">🚫</span><span class="stat-val">3</span><span class="stat-label">Flagged</span></div>
+            <div class="stat-card sc-cyan"><span class="stat-icon">💰</span><span class="stat-val">$2.1M</span><span class="stat-label">Total Amount</span></div>
+          </div>
+          <div class="card" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Request ID</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Requested</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--text-dim);">#WD-00891</td><td>DragonFlame99</td><td style="color:var(--gold);">$85,000</td><td>Bank Transfer</td><td><span class="badge badge-gold">Pending</span></td><td>5m ago</td><td><button class="action-btn approve" onclick="notify('Approved!','success')">Approve</button> <button class="action-btn ban" onclick="notify('Rejected!','error')">Reject</button></td></tr>
+                <tr><td style="color:var(--text-dim);">#WD-00890</td><td>SakuraHime</td><td style="color:var(--gold);">$120,000</td><td>Bitcoin</td><td><span class="badge badge-gold">Pending</span></td><td>22m ago</td><td><button class="action-btn approve" onclick="notify('Approved!','success')">Approve</button> <button class="action-btn ban" onclick="notify('Rejected!','error')">Reject</button></td></tr>
+                <tr><td style="color:var(--text-dim);">#WD-00889</td><td>NinjaAce2024</td><td style="color:var(--gold);">$45,000</td><td>PayPal</td><td><span class="badge badge-red">Flagged</span></td><td>1h ago</td><td><button class="action-btn edit" onclick="notify('Opening investigation...','info')">Review</button></td></tr>
+                <tr><td style="color:var(--text-dim);">#WD-00888</td><td>SamuraiKing88</td><td style="color:var(--gold);">$200,000</td><td>Bank Transfer</td><td><span class="badge badge-green">Approved</span></td><td>2h ago</td><td><button class="action-btn edit" onclick="notify('Viewing receipt...','info')">View</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BONUS ENGINE -->
+        <div id="atab-bonuses-admin" class="tab-content">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+            <div class="dash-section-title" style="margin-bottom:0;">Bonus Engine</div>
+            <button class="btn-primary" onclick="showModal('createBonusModal')">+ Create Bonus</button>
+          </div>
+          <div class="card" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Bonus Name</th><th>Type</th><th>Value</th><th>Claims</th><th>Status</th><th>Expiry</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td>Welcome Package 500%</td><td>Deposit Match</td><td>500%</td><td>12,441</td><td><span class="status online"><span class="status-dot"></span>Active</span></td><td>Dec 31, 2025</td><td><button class="action-btn edit" onclick="notify('Editing bonus...','info')">Edit</button> <button class="action-btn ban" onclick="notify('Bonus paused!','error')">Pause</button></td></tr>
+                <tr><td>Free Spins Pack 200</td><td>Free Spins</td><td>200 spins</td><td>8,320</td><td><span class="status online"><span class="status-dot"></span>Active</span></td><td>Dec 31, 2025</td><td><button class="action-btn edit" onclick="notify('Editing bonus...','info')">Edit</button> <button class="action-btn ban" onclick="notify('Bonus paused!','error')">Pause</button></td></tr>
+                <tr><td>Weekly Cashback 30%</td><td>Cashback</td><td>Up to 30%</td><td>Recurring</td><td><span class="status online"><span class="status-dot"></span>Active</span></td><td>Ongoing</td><td><button class="action-btn edit" onclick="notify('Editing bonus...','info')">Edit</button></td></tr>
+                <tr><td>Samurai Grand Prix</td><td>Tournament</td><td>$2M Pool</td><td>1,203</td><td><span class="status pending"><span class="status-dot"></span>Upcoming</span></td><td>Dec 29, 2025</td><td><button class="action-btn approve" onclick="notify('Tournament launched!','success')">Launch</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- KYC -->
+        <div id="atab-kyc" class="tab-content">
+          <div class="dash-section-title">KYC Verification Queue</div>
+          <div class="card" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Documents Submitted</th><th>Risk Score</th><th>Submitted</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td>NinjaAce2024<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b5dbdcdbdfd4f5d8d4dcd99bd6dad8">[email&#160;protected]</a></span></td><td>Passport, Utility Bill</td><td><span style="color:var(--green);">Low (12)</span></td><td>2h ago</td><td><button class="action-btn approve" onclick="notify('KYC Approved!','success')">Approve</button> <button class="action-btn ban" onclick="notify('KYC Rejected!','error')">Reject</button></td></tr>
+                <tr><td>PhoenixWing<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aadac2c5cfc4c3d2eac7cbc3c684c9c5c7">[email&#160;protected]</a></span></td><td>Driver's License</td><td><span style="color:var(--gold);">Medium (45)</span></td><td>5h ago</td><td><button class="action-btn approve" onclick="notify('KYC Approved!','success')">Approve</button> <button class="action-btn edit" onclick="notify('Requesting more docs...','info')">Request Docs</button></td></tr>
+                <tr><td>StormRider88<span class="sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c4b7b0abb6a984a9a5ada8eaa7aba9">[email&#160;protected]</a></span></td><td>Passport</td><td><span style="color:var(--crimson-bright);">High (78)</span></td><td>1d ago</td><td><button class="action-btn edit" onclick="notify('Escalating to compliance...','info')">Escalate</button> <button class="action-btn ban" onclick="notify('Account flagged!','error')">Flag</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RISK ALERTS -->
+        <div id="atab-alerts" class="tab-content">
+          <div class="dash-section-title">Risk & Fraud Alerts</div>
+          <ul class="notif-list">
+            <li class="notif-item"><div class="notif-dot" style="background:var(--crimson-bright);"></div><div><div class="notif-item-title">🚨 Unusual withdrawal pattern — StormRider88</div><div style="font-size:13px;color:var(--text-dim);margin:4px 0;">5 withdrawals in 30 minutes totaling $800,000. Account flagged for AML review.</div><div class="notif-item-time">15 minutes ago</div></div><div style="margin-left:auto;"><button class="action-btn ban" onclick="notify('Account suspended pending review!','error')">Suspend</button></div></li>
+            <li class="notif-item"><div class="notif-dot" style="background:var(--gold);"></div><div><div class="notif-item-title">⚠️ Multiple failed login attempts — DragonFlame99</div><div style="font-size:13px;color:var(--text-dim);margin:4px 0;">12 failed login attempts from different IPs. Possible account takeover attempt.</div><div class="notif-item-time">1 hour ago</div></div><div style="margin-left:auto;"><button class="action-btn edit" onclick="notify('2FA forced on account!','info')">Force 2FA</button></div></li>
+            <li class="notif-item"><div class="notif-dot" style="background:var(--cyan);"></div><div><div class="notif-item-title">ℹ️ Large jackpot won — SamuraiKing88</div><div style="font-size:13px;color:var(--text-dim);margin:4px 0;">Player won $2,400,000 on Ninja Fortune Slots. RNG verification completed: ✅ Valid</div><div class="notif-item-time">3 hours ago</div></div><div style="margin-left:auto;"><button class="action-btn approve" onclick="notify('Payout authorized!','success')">Authorize</button></div></li>
+          </ul>
+        </div>
+
+        <!-- CONFIG -->
+        <div id="atab-config" class="tab-content">
+          <div class="two-col">
+            <div>
+              <div class="dash-section-title">Platform Settings</div>
+              <div class="card" style="margin-bottom:24px;">
+                <div class="input-wrap"><label class="input-label">Platform Name</label><input class="input-field" value="SakuraBet"></div>
+                <div class="input-wrap"><label class="input-label">Default Currency</label><select class="input-field select-field"><option>$ US Dollar (USD)</option><option>$ US Dollar (USD)</option><option>₿ Bitcoin (BTC)</option></select></div>
+                <div class="input-wrap"><label class="input-label">Min Deposit ($)</label><input class="input-field" value="1,000"></div>
+                <div class="input-wrap"><label class="input-label">Min Withdrawal ($)</label><input class="input-field" value="5,000"></div>
+                <button class="btn-primary" onclick="notify('Platform settings saved!','success')">Save Settings</button>
+              </div>
+              <div class="dash-section-title">Maintenance Mode</div>
+              <div class="card">
+                <div style="display:flex;flex-direction:column;gap:18px;">
+                  <div class="toggle-wrap"><div class="toggle" onclick="this.classList.toggle('on');notify(this.classList.contains('on')?'Maintenance mode ON!':'Maintenance mode OFF!',this.classList.contains('on')?'error':'success')"><div class="toggle-knob"></div></div><div class="toggle-label">Enable Maintenance Mode</div></div>
+                  <div class="toggle-wrap"><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div><div class="toggle-label">Player Registrations Open</div></div>
+                  <div class="toggle-wrap"><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div><div class="toggle-label">Deposits Enabled</div></div>
+                  <div class="toggle-wrap"><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div><div class="toggle-label">Withdrawals Enabled</div></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="dash-section-title">Email Configuration</div>
+              <div class="card" style="margin-bottom:24px;">
+                <div class="input-wrap"><label class="input-label">SMTP Host</label><input class="input-field" value="smtp.sakurabet.com"></div>
+                <div class="input-wrap"><label class="input-label">SMTP Port</label><input class="input-field" value="587"></div>
+                <div class="input-wrap"><label class="input-label">From Email</label><input class="input-field" value="noreply@sakurabet.com"></div>
+                <button class="btn-secondary" onclick="notify('Test email sent!','info')">Send Test Email</button>
+              </div>
+              <div class="dash-section-title">API Keys</div>
+              <div class="card">
+                <div class="input-wrap"><label class="input-label">Payment Gateway Key</label><input class="input-field" type="password" value="pk_live_xxxxxxxxxxxxx"></div>
+                <div class="input-wrap"><label class="input-label">RNG Certification Key</label><input class="input-field" type="password" value="rng_cert_xxxxxxxx"></div>
+                <div class="input-wrap"><label class="input-label">KYC Provider Key</label><input class="input-field" type="password" value="kyc_live_xxxxxxxxx"></div>
+                <button class="btn-primary" onclick="notify('API keys updated!','success')">Update Keys</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOGS -->
+        <div id="atab-logs" class="tab-content">
+          <div class="dash-section-title">System Logs</div>
+          <div class="card" style="background:rgba(0,0,0,0.4);font-family:monospace;font-size:12px;padding:20px;max-height:500px;overflow-y:auto;">
+            <div style="color:var(--green);">[2025-12-12 14:32:01] INFO  → Player SamuraiKing88 logged in from IP 192.168.1.42</div>
+            <div style="color:var(--cyan);margin-top:6px;">[2025-12-12 14:31:55] INFO  → Withdrawal #WD-00888 approved. Amount: $200,000. User: SamuraiKing88</div>
+            <div style="color:var(--text-dim);margin-top:6px;">[2025-12-12 14:30:12] DEBUG → Game session started: Ninja Fortune Slots. User: DragonFlame99</div>
+            <div style="color:var(--gold);margin-top:6px;">[2025-12-12 14:29:44] WARN  → High withdrawal volume detected for user StormRider88</div>
+            <div style="color:var(--crimson-bright);margin-top:6px;">[2025-12-12 14:28:30] ERROR → Failed login attempt from IP 10.0.0.99 for user DragonFlame99</div>
+            <div style="color:var(--green);margin-top:6px;">[2025-12-12 14:27:01] INFO  → Jackpot won: $2,400,000 by SamuraiKing88 on Ninja Fortune Slots</div>
+            <div style="color:var(--cyan);margin-top:6px;">[2025-12-12 14:26:15] INFO  → New user registration: NinjaAce2024 from 🇺🇸 US</div>
+            <div style="color:var(--text-dim);margin-top:6px;">[2025-12-12 14:25:00] DEBUG → RNG seed rotated for all table games. Certified by GLI Labs.</div>
+            <div style="color:var(--text-dim);margin-top:6px;">[2025-12-12 14:24:12] DEBUG → Bonus engine processed weekly cashback for 4,821 players. Total: $12.4M</div>
+            <div style="color:var(--gold);margin-top:6px;">[2025-12-12 14:22:30] WARN  → Dragon Roulette server load high. Auto-scaled to 3 instances.</div>
+            <div style="color:var(--green);margin-top:6px;">[2025-12-12 14:20:01] INFO  → SSL certificate renewed. Valid until 2026-12-12.</div>
+            <div style="color:var(--cyan);margin-top:6px;">[2025-12-12 14:18:44] INFO  → Database backup completed. 4.2GB. Duration: 47s.</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+<div class="modal-overlay" id="depositModal">
+  <div class="modal">
+    <button class="modal-close" onclick="hideModal('depositModal')">✕</button>
+    <div style="font-family:'Cinzel Decorative',cursive;font-size:20px;color:var(--gold);margin-bottom:8px;">Quick Deposit</div>
+    <div style="font-size:13px;color:var(--text-dim);margin-bottom:24px;letter-spacing:0.5px;">Funds arrive instantly</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">
+      <button style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);color:var(--gold);padding:12px;font-family:'Rajdhani',sans-serif;font-weight:700;cursor:pointer;font-size:14px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,215,0,0.15)'" onmouseout="this.style.background='rgba(255,215,0,0.08)'">$10,000</button>
+      <button style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);color:var(--gold);padding:12px;font-family:'Rajdhani',sans-serif;font-weight:700;cursor:pointer;font-size:14px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,215,0,0.15)'" onmouseout="this.style.background='rgba(255,215,0,0.08)'">$50,000</button>
+      <button style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);color:var(--gold);padding:12px;font-family:'Rajdhani',sans-serif;font-weight:700;cursor:pointer;font-size:14px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,215,0,0.15)'" onmouseout="this.style.background='rgba(255,215,0,0.08)'">$100,000</button>
+    </div>
+    <div class="input-wrap"><label class="input-label">Custom Amount ($)</label><input class="input-field" type="number" placeholder="Enter amount"></div>
+    <div class="input-wrap"><label class="input-label">Payment Method</label><select class="input-field select-field"><option>💳 Credit / Debit Card</option><option>🏦 Bank Transfer</option><option>₿ Bitcoin</option><option>⟠ Ethereum</option></select></div>
+    <button class="btn-primary" style="width:100%;padding:14px;margin-top:8px;" onclick="hideModal('depositModal');notify('Deposit successful! $50,000 added to your balance.','success')">Confirm Deposit</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="withdrawModal">
+  <div class="modal">
+    <button class="modal-close" onclick="hideModal('withdrawModal')">✕</button>
+    <div style="font-family:'Cinzel Decorative',cursive;font-size:20px;color:var(--gold);margin-bottom:8px;">Withdraw Funds</div>
+    <div style="font-size:13px;color:var(--text-dim);margin-bottom:24px;">Available: <span style="color:var(--gold);font-weight:700;">$142,850.00</span></div>
+    <div class="input-wrap"><label class="input-label">Amount ($)</label><input class="input-field" type="number" placeholder="Minimum $5,000"></div>
+    <div class="input-wrap"><label class="input-label">Withdrawal Method</label><select class="input-field select-field"><option>🏦 Bank Transfer (1-3 days)</option><option>₿ Bitcoin (1-2 hours)</option><option>⟠ Ethereum (1-2 hours)</option><option>🅿 PayPal (instant)</option></select></div>
+    <div class="input-wrap"><label class="input-label">Account / Wallet Address</label><input class="input-field" placeholder="Bank account or crypto wallet"></div>
+    <button class="btn-primary" style="width:100%;padding:14px;margin-top:8px;" onclick="hideModal('withdrawModal');notify('Withdrawal request submitted! Processing within 24h.','info')">Request Withdrawal</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="createBonusModal">
+  <div class="modal">
+    <button class="modal-close" onclick="hideModal('createBonusModal')">✕</button>
+    <div style="font-family:'Cinzel Decorative',cursive;font-size:20px;color:var(--gold);margin-bottom:8px;">Create New Bonus</div>
+    <div style="font-size:13px;color:var(--text-dim);margin-bottom:24px;letter-spacing:0.5px;">Configure and launch a new promotion</div>
+    <div class="input-wrap"><label class="input-label">Bonus Name</label><input class="input-field" placeholder="e.g. New Year Bonus 2025"></div>
+    <div class="input-wrap"><label class="input-label">Bonus Type</label><select class="input-field select-field"><option>Deposit Match</option><option>Free Spins</option><option>Cashback</option><option>Tournament</option><option>No Deposit</option></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="input-wrap"><label class="input-label">Value / %</label><input class="input-field" placeholder="e.g. 200%"></div>
+      <div class="input-wrap"><label class="input-label">Max Bonus ($)</label><input class="input-field" placeholder="e.g. 500,000"></div>
+    </div>
+    <div class="input-wrap"><label class="input-label">Wagering Requirement (x)</label><input class="input-field" placeholder="e.g. 30"></div>
+    <div class="input-wrap"><label class="input-label">Expiry Date</label><input class="input-field" type="date"></div>
+    <button class="btn-primary" style="width:100%;padding:14px;margin-top:8px;" onclick="hideModal('createBonusModal');notify('New bonus created and published!','success')">Launch Bonus</button>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ===== PAGE NAVIGATION =====
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  window.scrollTo(0,0);
+  if (page === 'dashboard') {
+    setTimeout(() => { renderChart('playerChart', [40,70,30,90,55,80,95], false); }, 100);
+  }
+  if (page === 'admin') {
+    setTimeout(() => {
+      renderChart('adminChart', [60,80,55,95,70,110,85,120,90,130,100,140,115,160], true);
+      renderChart('revenueChart', [42,58,61,55,72,88,75,92,84,96,101,120], true);
+    }, 100);
+  }
+}
+
+// ===== NOTIFICATIONS =====
+function notify(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = `notif ${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ===== MODALS =====
+function showModal(id) { document.getElementById(id).classList.add('open'); }
+function hideModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); });
+});
+
+// ===== TAB SWITCHING =====
+function dashTab(name, el) {
+  document.querySelectorAll('#page-dashboard .tab-content').forEach(t => t.classList.remove('active'));
+  const target = document.getElementById('dtab-' + name);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('#playerSidebar .sidebar-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('dash-page-title').textContent = el ? el.textContent.trim().replace(/[^\w\s]/gi,'').trim() : name;
+  if (name === 'overview') setTimeout(() => renderChart('playerChart', [40,70,30,90,55,80,95], false), 50);
+}
+
+function adminTab(name, el) {
+  document.querySelectorAll('#page-admin .tab-content').forEach(t => t.classList.remove('active'));
+  const target = document.getElementById('atab-' + name);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('#adminSidebar .sidebar-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('admin-page-title').textContent = el ? el.textContent.trim().replace(/[^\w\s]/gi,'').trim() : name;
+  if (name === 'revenue') setTimeout(() => renderChart('revenueChart', [42,58,61,55,72,88,75,92,84,96,101,120], true), 50);
+}
+
+function switchTab(el, contentId) {
+  const parent = el.closest('.tab-content') || el.closest('.page');
+  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  parent.querySelectorAll(':scope > .tab-content').forEach(t => t.classList.remove('active'));
+  const target = parent.querySelector('#' + contentId);
+  if (target) target.classList.add('active');
+}
+
+// ===== SIDEBAR TOGGLE =====
+function toggleSidebar(id) {
+  const sidebar = document.getElementById(id);
+  const overlay = document.getElementById('sidebarOverlay');
+  const isOpen = sidebar.classList.contains('open');
+  if (isOpen) {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  } else {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+  }
+}
+function closeAllSidebars() {
+  document.getElementById('playerSidebar') && document.getElementById('playerSidebar').classList.remove('open');
+  document.getElementById('adminSidebar') && document.getElementById('adminSidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+// ===== AUTH FUNCTIONS =====
+function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const pw = document.getElementById('login-password').value;
+  if (!email || !pw) { notify('Please fill in all fields', 'error'); return; }
+  notify('Logging in...', 'info');
+  setTimeout(() => goTo('dashboard'), 1000);
+}
+
+function doRegister() {
+  if (!document.getElementById('terms-check').checked) {
+    notify('Please agree to terms and conditions', 'error'); return;
+  }
+  notify('Creating account...', 'info');
+  setTimeout(() => { notify('Account created! Welcome to SakuraBet! 🌸', 'success'); goTo('dashboard'); }, 1200);
+}
+
+function sendOTP() {
+  const email = document.getElementById('forgot-email').value;
+  if (!email) { notify('Please enter your email', 'error'); return; }
+  document.getElementById('forgot-sent-to').textContent = `We sent a 6-digit code to ${email}`;
+  document.getElementById('forgot-step1').style.display = 'none';
+  document.getElementById('forgot-step2').style.display = 'block';
+  notify('Recovery code sent!', 'success');
+}
+
+function otpNext(el) {
+  if (el.value.length === 1) {
+    const next = el.nextElementSibling;
+    if (next && next.classList.contains('otp-input')) next.focus();
+  }
+}
+
+function verifyOTP() {
+  document.getElementById('forgot-step2').style.display = 'none';
+  document.getElementById('forgot-step3').style.display = 'block';
+  notify('Code verified!', 'success');
+}
+
+function resetDone() {
+  notify('Password updated successfully! Redirecting...', 'success');
+  setTimeout(() => goTo('login'), 1500);
+}
+
+function togglePw(id, icon) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  icon.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+// ===== CHAT =====
+function sendChat() {
+  const inp = document.getElementById('chat-input');
+  if (!inp.value.trim()) return;
+  const msgs = document.getElementById('chat-msgs');
+  const msg = document.createElement('div');
+  msg.style.cssText = 'background:rgba(201,0,43,0.15);padding:10px 14px;border-radius:8px 8px 0 8px;max-width:85%;font-size:13px;line-height:1.6;align-self:flex-end;margin-left:auto;';
+  msg.innerHTML = `<div style="font-size:10px;color:var(--text-dim);margin-bottom:4px;letter-spacing:1px;">YOU</div>${inp.value}`;
+  msgs.appendChild(msg);
+  inp.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => {
+    const res = document.createElement('div');
+    res.style.cssText = 'background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:0 8px 8px 8px;max-width:85%;font-size:13px;line-height:1.6;';
+    res.innerHTML = `<div style="font-size:10px;color:var(--text-dim);margin-bottom:4px;letter-spacing:1px;">SUPPORT AGENT</div>Thank you for reaching out! Our team is looking into this for you right away. 🙏`;
+    msgs.appendChild(res);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 1200);
+}
+
+// ===== CHART RENDERING =====
+function renderChart(id, data, isGold) {
+  const container = document.getElementById(id);
+  if (!container) return;
+  container.innerHTML = '';
+  const max = Math.max(...data);
+  data.forEach((v, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar' + (isGold ? ' gold-bar' : '');
+    bar.style.height = Math.max(10, (v / max) * 120) + 'px';
+    bar.title = '$' + v.toFixed(1) + 'M';
+    container.appendChild(bar);
+  });
+}
+
+// ===== STATS COUNTER ANIMATION =====
+function animateCount(id, target, prefix = '', suffix = '') {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let cur = 0; const step = target / 60;
+  const iv = setInterval(() => {
+    cur = Math.min(cur + step, target);
+    el.textContent = prefix + Math.floor(cur).toLocaleString() + suffix;
+    if (cur >= target) clearInterval(iv);
+  }, 16);
+}
+
+// ===== PARTICLES =====
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize);
+resize();
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height + canvas.height;
+    this.vy = -(Math.random() * 1.5 + 0.3);
+    this.vx = (Math.random() - 0.5) * 0.5;
+    this.size = Math.random() * 6 + 2;
+    this.alpha = Math.random() * 0.6 + 0.1;
+    this.color = Math.random() > 0.5 ? '#ffb7c5' : (Math.random() > 0.5 ? '#ffd700' : '#ff7b9c');
+    this.spin = (Math.random() - 0.5) * 0.05;
+    this.angle = Math.random() * Math.PI * 2;
+  }
+  update() {
+    this.y += this.vy; this.x += this.vx + Math.sin(Date.now() * 0.001 + this.x) * 0.2;
+    this.alpha -= 0.002; this.angle += this.spin;
+    if (this.y < -20 || this.alpha <= 0) this.reset();
+  }
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, this.size, this.size * 1.6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+for (let i = 0; i < 60; i++) {
+  const p = new Particle();
+  p.y = Math.random() * canvas.height;
+  particles.push(p);
+}
+
+function animLoop() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animLoop);
+}
+animLoop();
+
+// ===== NAV SCROLL =====
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('mainNav');
+  if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ===== INIT ON LOAD =====
+window.addEventListener('load', () => {
+  animateCount('stat1', 524810, '', '+');
+  animateCount('stat2', 200, '', '+');
+  animateCount('stat3', 48200000, '$');
+  renderChart('playerChart', [40,70,30,90,55,80,95], false);
+});
+
+function scrollTo(hash) {
+  const el = document.querySelector(hash);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
